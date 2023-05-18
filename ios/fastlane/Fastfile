@@ -1,0 +1,71 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Push a new release build to the App Store"
+
+  lane :beta do
+    setup_ci
+    match(type: 'appstore', keychain_name: ENV['MATCH_KEYCHAIN_NAME'], keychain_password: ENV['MATCH_KEYCHAIN_PASSWORD'], readonly: is_ci)
+    increment_build_number(build_number: ENV['CI_JOB_ID'])
+    # set some path information.
+    baseDir = ENV['CI_PROJECT_DIR'] || ENV['PWD']
+    pkgVersion = ENV['PKG_VERSION'] || '0.0.0'
+    pkgReleaseType = ENV['PKG_RELEASE_TYPE'] || 'debug'
+    build_app(
+      workspace: "Runner.xcworkspace", 
+      scheme: "Runner",
+      build_path: "#{baseDir}/build/ios/",
+      output_directory: "#{baseDir}/build/ios/ipa/",
+      output_name: "flsvplan-ios-#{pkgVersion}-#{pkgReleaseType}",
+      buildlog_path: "#{baseDir}/build/_logs",
+      export_method: "app-store",
+      export_options: {
+        provisioningProfiles: {
+          "de.fls-wiesbaden.vplan.ios" => "match AppStore de.fls-wiesbaden.vplan.ios"
+        }
+      }
+    )
+    pilot(api_key_path: ENV['FASTLANE_APP_STORE_JWT'])
+  end
+
+  lane :release do
+    setup_ci
+    match(type: 'appstore', keychain_name: ENV['MATCH_KEYCHAIN_NAME'], keychain_password: ENV['MATCH_KEYCHAIN_PASSWORD'], readonly: is_ci)
+    increment_build_number(build_number: ENV['CI_JOB_ID'])
+    #get_push_certificate
+    # set some path information.
+    baseDir = ENV['CI_PROJECT_DIR'] || ENV['PWD']
+    pkgVersion = ENV['PKG_VERSION'] || '0.0.0'
+    pkgReleaseType = ENV['PKG_RELEASE_TYPE'] || 'debug'
+    build_app(
+      workspace: "Runner.xcworkspace", 
+      scheme: "Runner",
+      build_path: "#{baseDir}/build/ios/",
+      output_directory: "#{baseDir}/build/ios/ipa/",
+      output_name: "flsvplan-ios-#{pkgVersion}-#{pkgReleaseType}",
+      buildlog_path: "#{baseDir}/build/_logs",
+      export_method: "app-store",
+      export_options: {
+        provisioningProfiles: {
+          "de.fls-wiesbaden.vplan.ios" => "match AppStore de.fls-wiesbaden.vplan.ios"
+        }
+      }
+    )
+    upload_to_app_store(skip_metadata: true, skip_screenshots: true, precheck_include_in_app_purchases: false, api_key_path: ENV['FASTLANE_APP_STORE_JWT'])
+  end
+end

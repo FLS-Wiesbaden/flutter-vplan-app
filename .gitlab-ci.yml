@@ -1,0 +1,275 @@
+variables:
+  xcodeVersion: ""
+  # options:
+  #    - "13"
+  #    - "13.1"
+  #    - "13.2"
+  #    - "13.2.1"
+  #    - "14.0.1"
+  flutterVersion: "3.7.8"
+  PKG_BUILD_FLAGS: "--no-obfuscate"
+
+stages:
+  - build
+  - test
+#  - deploy
+
+workflow:
+  rules: 
+   - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+   - if: $CI_COMMIT_BRANCH == "dev"
+   - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+default:
+  cache: &global_cache
+    - key:
+        files:
+          - pubspec.lock
+      paths:
+        - $HOME/.pub-cache
+      policy: pull-push
+
+code_quality:
+  stage: test
+  image: "ghcr.io/cirruslabs/flutter:${flutterVersion}"
+  needs: []
+  cache:
+    key:
+      files:
+        - android/app/src/main/AndroidManifest.xml
+    paths:
+      - ../../../opt/android-sdk-linux
+    policy: pull
+  before_script:
+    - flutter pub global activate dart_code_metrics
+    - export PATH="$PATH:$HOME/.pub-cache/bin"
+  script:
+    - metrics lib -r codeclimate  > gl-code-quality-report.json
+  artifacts:
+    reports:
+      codequality: gl-code-quality-report.json
+
+test:
+  stage: test
+  image: "ghcr.io/cirruslabs/flutter:${flutterVersion}"
+  needs: []
+  cache:
+    key:
+      files:
+        - android/app/src/main/AndroidManifest.xml
+    paths:
+      - ../../../opt/android-sdk-linux
+    policy: pull
+  before_script:
+    - export PATH="$PATH:$HOME/.pub-cache/bin"
+    - flutter pub global activate junitreport
+  script:
+    - flutter config --no-analytics
+    - flutter pub get
+    - flutter clean
+    - flutter gen-l10n
+    - flutter test --machine --coverage | tojunit -o report.xml -p de.wiesbaden.fls.vplan.v3 -b "`pwd`"
+    - lcov --summary coverage/lcov.info
+    - genhtml coverage/lcov.info --output=coverage
+  coverage: '/lines\.*: \d+\.\d+\%/'
+  tags:
+    - android
+    - linux
+    - flutter
+  artifacts:
+    name: coverage
+    paths:
+      - $CI_PROJECT_DIR/coverage
+    reports:
+      junit: report.xml
+
+build:android:
+  stage: build
+  image: "ghcr.io/cirruslabs/flutter:${flutterVersion}"
+  cache:
+    key:
+      files:
+        - android/app/src/main/AndroidManifest.xml
+        - android/Gemfile.lock
+    paths:
+      - ../../../opt/android-sdk-linux
+      - ./vendor
+    policy: pull-push
+  variables:
+    SECURE_FILES_DOWNLOAD_PATH: './private_keys'
+  before_script:
+    - export PATH="$PATH:$HOME/.pub-cache/bin"
+    - |
+      export PKG_BUILD_FLAGS="$PKG_BUILD_FLAGS --ignore-deprecation"
+      if [[ $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH ]]; then
+        export PKG_BUILD_FLAGS="$PKG_BUILD_FLAGS --release"
+        export PKG_RELEASE_TYPE="release"
+      else 
+        export PKG_BUILD_FLAGS="$PKG_BUILD_FLAGS --debug"
+        export PKG_RELEASE_TYPE="debug"
+      fi
+      export PKG_VERSION="`grep 'version: ' pubspec.yaml | sed -E 's/version: (.+)\+([0-9]+)/\1_\2/'`"
+      export SEC_FILES="$PATH/private_keys"
+    - |
+      echo "Prepare gem handling"
+      pushd android
+      bundle install
+      popd
+  script:
+    - curl --silent "https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer" | bash
+    - |
+      if [[ -f "$SEC_FILES/key.properties" ]]; then 
+        sed -i "/#path#/$SEC_FILES/" $SEC_FILES/key.properties
+        ln -s $SEC_FILES/key.properties android/key.properties
+      fi
+    - flutter config --no-analytics
+    - flutter pub get
+    - flutter clean
+    - flutter gen-l10n
+    - flutter build appbundle $PKG_BUILD_FLAGS
+    - mv build/app/outputs/bundle/${PKG_RELEASE_TYPE}/app-${PKG_RELEASE_TYPE}.aab build/app/outputs/bundle/flsvplan-android-${PKG_VERSION}-${PKG_RELEASE_TYPE}.aab || true
+    - |
+      if [[ $CI_PIPELINE_SOURCE != "merge_request_event" ]]; then
+        pushd android
+        if [[ $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH ]]; then
+          bundle exec fastlane deploy
+        else
+          bundle exec fastlane beta
+        fi
+        popd
+      fi
+  after_script:
+    - rm -Rf android/key.properties
+    - rm -Rf $SEC_FILES
+  tags:
+    - android
+    - linux
+    - flutter
+  artifacts:
+    name: apk
+    expire_in: "1 day"
+    paths:
+      - ./build/app/outputs/bundle/*.aab
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+    - if: $CI_COMMIT_BRANCH == "dev"
+      when: manual
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+# Please note, that you should have:
+# - installed XCode 14.2
+# - installed XCode CLI support
+# - installed Ruby 2.7 with its development environment (e.g. via Brew)
+# - Correctly placed in .zprofile, etc.
+# - Correctly installed Cocoapods (https://cocoapods.org/)
+build:ios:
+  stage: build
+  image: "ghcr.io/cirruslabs/flutter:${flutterVersion}"
+  cache:
+    key:
+      files:
+        - ios/Gemfile.lock
+    paths:
+      - ./vendor
+    policy: pull-push
+  before_script:
+    - |
+      source ~/.zprofile
+      if [[ -z "${xcodeVersion}" ]]; then
+        export XCODE_DIR="Xcode.app"
+      else
+        export XCODE_DIR="Xcode_${xcodeVersion}.app"
+      fi
+      export DEVELOPER_DIR=/Applications/${XCODE_DIR}/Contents/Developer
+      export PATH="$PATH:$HOME/.pub-cache/bin:$HOME/dev/flutter/bin:/usr/local/bin"
+      export LC_ALL=en_US.UTF-8
+      export LANG=en_US.UTF-8
+      export SPACESHIP_ONLY_ALLOW_INTERACTIVE_2FA="true"
+      export MATCH_VERBOSE="false"
+      export BUNDLE_PATH="${CI_PROJECT_DIR}/vendor/cache"
+      export BUNDLE_DISABLE_SHARED_GEMS="1"
+      # To add split-debug: --split-debug-info=v1 to PKG_BUILD_FLAGS
+      export PKG_BUILD_FLAGS="$PKG_BUILD_FLAGS --no-codesign"
+      if [[ $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH ]]; then
+        export PKG_BUILD_FLAGS="$PKG_BUILD_FLAGS --release"
+        export PKG_RELEASE_TYPE="release"
+      else 
+        export PKG_BUILD_FLAGS="$PKG_BUILD_FLAGS --debug"
+        export PKG_RELEASE_TYPE="debug"
+      fi
+      export PKG_BASE_VERSION="`grep 'version: ' pubspec.yaml | sed -E 's/version: (.+)\+([0-9]+)/\1/'`"
+      export PKG_VERSION_YAML="${PKG_BASE_VERSION}+${CI_JOB_ID}"
+      export PKG_VERSION="${PKG_BASE_VERSION}_${CI_JOB_ID}"
+      # update pkg version in pubspec
+      sed -i '' -E "s/version: (.+)\+([0-9]+)/version: ${PKG_VERSION_YAML}/" pubspec.yaml
+      mkdir -p ${CI_PROJECT_DIR}/build/_logs
+      mkdir -p ${CI_PROJECT_DIR}/build/ios/ipa
+    - |
+      echo "Create keychain"
+      security create-keychain -p "$MATCH_KEYCHAIN_PASSWORD" "$MATCH_KEYCHAIN_NAME" || true
+      echo "Change default keychain"
+      security default-keychain -d user -s "$MATCH_KEYCHAIN_NAME"
+    - |
+      echo "Prepare gem handling"
+      pushd ios
+      bundle install
+      popd
+  script:
+    # switching xcode is not supported yet.
+    #- xcode-select -s $DEVELOPER_DIR
+    - flutter config --no-analytics
+    - flutter pub get
+    - flutter clean
+    - flutter gen-l10n
+    - |
+      echo "Unlock keychain"
+      security unlock-keychain -p "$MATCH_KEYCHAIN_PASSWORD" "$MATCH_KEYCHAIN_NAME"
+      if [[ $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH ]]; then
+        pushd ios
+        echo "Download certs"
+        bundle exec fastlane match appstore --readonly
+        security unlock-keychain -p "$MATCH_KEYCHAIN_PASSWORD" "$MATCH_KEYCHAIN_NAME"
+        popd
+        echo "Build ios app archive"
+        flutter build ipa $PKG_BUILD_FLAGS
+        pushd ios
+        if [[ $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH ]]; then
+          bundle exec fastlane ios release
+        else
+          bundle exec fastlane ios beta
+        fi
+        popd
+      else
+        echo "Build ios runner as unarchived variant."
+        flutter build ios $PKG_BUILD_FLAGS
+        pushd ./build/ios/iphoneos/
+        zip -r ./flsvplan-ios-${PKG_VERSION}-${PKG_RELEASE_TYPE}.app.zip Runner.app- zip -r ./flsvplan-runner.app.zip Runner.app
+        popd
+      fi
+  after_script:
+    - |
+      echo "Reset default keychain"
+      security default-keychain -d user -s "login.keychain"
+      echo "Delete keychain again"
+      security delete-keychain "$MATCH_KEYCHAIN_NAME"
+      echo "Delete downloaded mobile provision profiles"
+      rm -Rf "$HOME/Library/MobileDevice/Provisioning Profiles/*.mobileprovision"
+  tags:
+    - ios
+    - macos
+    - flutter
+    - xcode
+  artifacts:
+    name: ios
+    expire_in: "1 day"
+    paths:
+      - ./build/ios/iphoneos/*.app.zip
+      - ./build/ios/ipa/*.ipa
+      - ./ios/*.ipa
+      - ./ios/fastlane/report.xml
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+    - if: $CI_COMMIT_BRANCH == "dev"
+      when: manual

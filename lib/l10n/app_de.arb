@@ -1,0 +1,146 @@
+{
+  "aboutApp": "Über die App",
+  "authenticationError": "Authentifizierungsfehler. Bitte erneut authentifizieren.",
+  "by": "bei",
+  "cancel": "Abbrechen",
+  "changedRoom": "Geänderter Raum: {room}",
+  "@changedRoom": {
+    "placeholders": {
+      "room": {
+        "type": "String",
+        "example": "A299"
+      }
+    }
+  },
+  "changedSubject": "Geändertes Fach: {subject}",
+  "@changedSubject": {
+    "placeholders": {
+      "subject": {
+        "type": "String",
+        "example": "Chemistry"
+      }
+    }
+  },
+  "changeNotice": "Änderungshinweis: {note}",
+  "@changeNotice": {
+    "placeholders": {
+      "note": {
+        "type": "String",
+        "example": "Tasks to work on"
+      }
+    }
+  },
+  "changeType": "Type: {type}",
+  "@changeType": {
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "example": "Cancelled"
+      }
+    }
+  },
+  "chooseFilter": "Wählen Sie Ihre Schulform, Klassen und optional Kurse. Die Liste wird ständig aktualisiert.",
+  "classes": "Klassen",
+  "concept": "Konzept",
+  "confirmLogout": "Möchten Sie sich wirklich abmelden?",
+  "courses": "Kurse",
+  "createCalendarEntry": "Kalendereintrag erstellen",
+  "credentials": "Zugangsdaten",
+  "design": "Design",
+  "development": "Entwicklung",
+  "cancelled": "Entfall",
+  "email": "E-Mail",
+  "errorMessage": "Fehlermeldung: {message}",
+  "@errorMessage": {
+    "placeholders": {
+      "message": {
+        "type": "String",
+        "example": "Server not reachable."
+      }
+    }
+  },
+  "errorOnLoading": "Fehler beim Laden.",
+  "errorPassword": "Bitte geben Sie das Kennwort ein.",
+  "errorUsername": "Bitte geben Sie den Benutzernamen ein.",
+  "eventTitle": "{title}: Stunden {hours}",
+  "@eventTitle": {
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "example": "Tasks to work on"
+      },
+      "hours": {
+        "type": "String",
+        "example": "3.-4."
+      }
+    }
+  },
+  "everythingOnSchedule": "Alles nach Plan",
+  "forSomeone": "für",
+  "general": "Allgemein",
+  "go": "Los geht's",
+  "hour": "Uhr",
+  "hourTo": "Uhr bis",
+  "inClass": "in Klasse",
+  "inRoom": "in Raum",
+  "invalidBarcodeScanned": "Ungültiger Barcode gescannt!",
+  "lastUpdate": "Letzte Aktualisierung {updateDate}",
+  "@lastUpdate": {
+    "placeholders": {
+      "updateDate": {
+        "type": "String",
+        "example": "15.01.1902"
+      }
+    }
+  },
+  "license": "Lizenz",
+  "licenses": "Lizenzen",
+  "login": "Anmelden",
+  "loginCard": "Anmeldekarte",
+  "loginDescription": "Melden Sie sich mit den bereitgestellten Daten Ihrer Schule ein!",
+  "loginLoginCard": "Anmelden über Anmeldekarte",
+  "loginNotPossibleCredentials": "Eine Anmeldung war nicht möglich. Bitte überprüfen Sie Ihre Zugangsdaten!",
+  "loginNotPossibleInternet": "Eine Anmeldung war nicht möglich. Sie benötigen Internet für die Anmeldung!",
+  "myPlan": "Mein Plan",
+  "name": "Name",
+  "no": "Nein",
+  "password": "Kennwort",
+  "phone": "Telefon",
+  "planModeForm": "Planmodus: ",
+  "pleaseConfirm": "Bitte bestätigen",
+  "publisher": "Herausgeber",
+  "pupil": "Lernende",
+  "regular": "Regulär",
+  "regularPlan": "Regulärplan",
+  "scanCanceled": "Anmelden über die Anmeldekarte wurde abgebrochen",
+  "school": "Schule",
+  "schoolNotSupported": "Die Schule aus der Anmeldekarte wird nicht unterstützt.",
+  "schoolPlan": "Schul-Plan",
+  "schoolTypes": "Schulformen",
+  "settings": "Einstellungen",
+  "shareAsPicture": "Als Bild teilen",
+  "shareAsText": "Als Text teilen",
+  "standin": "Vertretung",
+  "standInPlan": "Vertretungsplan",
+  "store": "Store",
+  "storeUnknown": "Über keinen bekannten Store installiert",
+  "substituteTeacher": "Vertretungslehrkraft: {teacherName}",
+  "@substituteTeacher": {
+    "placeholders": {
+      "teacherName": {
+        "type": "String",
+        "example": "M. Musterfrau"
+      }
+    }
+  },
+  "subtitle": "Vertretungsplan-App made by Friedrich-List-Schule Wiesbaden",
+  "supervision": "Aufsicht",
+  "teacher": "Lehrende",
+  "title": "FLS Vertretungsplan",
+  "username": "Benutzername",
+  "version": "Version",
+  "from": "von",
+  "website": "Homepage",
+  "yes": "Ja",
+  "youGetNotified": "Du wirst benachrichtigt, wenn neue\n Vertretungen vorliegen.\nZiehen zum Aktualisieren."
+}

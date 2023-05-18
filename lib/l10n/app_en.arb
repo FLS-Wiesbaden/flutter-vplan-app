@@ -1,0 +1,146 @@
+{
+  "aboutApp": "About app",
+  "authenticationError": "Authentication error. Please re-authenticate.",
+  "by": "by",
+  "cancel": "Cancel",
+  "changedRoom": "Changed room: {room}",
+  "@changedRoom": {
+    "placeholders": {
+      "room": {
+        "type": "String",
+        "example": "A299"
+      }
+    }
+  },
+  "changedSubject": "Changed subject: {subject}",
+  "@changedSubject": {
+    "placeholders": {
+      "subject": {
+        "type": "String",
+        "example": "Chemistry"
+      }
+    }
+  },
+  "changeNotice": "Change notice: {note}",
+  "@changeNotice": {
+    "placeholders": {
+      "note": {
+        "type": "String",
+        "example": "Tasks to work on"
+      }
+    }
+  },
+  "changeType": "Art: {type}",
+  "@changeType": {
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "example": "Cancelled"
+      }
+    }
+  },
+  "chooseFilter": "Select your school type, classes and optionally courses. The list is constantly updated.",
+  "classes": "Classes",
+  "concept": "Concept",
+  "confirmLogout": "Do you really want to log out?",
+  "courses": "Courses",
+  "createCalendarEntry": "Create calendar entry",
+  "credentials": "Credentials",
+  "design": "Design",
+  "development": "Development",
+  "cancelled": "Cancelled",
+  "email": "E-mail",
+  "errorMessage": "Error message: {message}",
+  "@errorMessage": {
+    "placeholders": {
+      "message": {
+        "type": "String",
+        "example": "Server not reachable."
+      }
+    }
+  },
+  "errorOnLoading": "Error on loading.",
+  "errorPassword": "Please enter the password.",
+  "errorUsername": "Please enter the username.",
+  "eventTitle": "{title}: Hours {hours}",
+  "@eventTitle": {
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "example": "Tasks to work on"
+      },
+      "hours": {
+        "type": "String",
+        "example": "3.-4."
+      }
+    }
+  },
+  "everythingOnSchedule": "Everything on schedule",
+  "forSomeone": "for",
+  "general": "General",
+  "go": "Let's go",
+  "hour": "O'clock",
+  "hourTo": "O'clock to",
+  "inClass": "in class",
+  "inRoom": "in room",
+  "invalidBarcodeScanned": "Invalid barcode scanned!",
+  "lastUpdate": "Last update {updateDate}",
+  "@lastUpdate": {
+    "placeholders": {
+      "updateDate": {
+        "type": "String",
+        "example": "15.01.1902"
+      }
+    }
+  },
+  "license": "License",
+  "licenses": "Licenses",
+  "login": "Login",
+  "loginCard": "Login card",
+  "loginDescription": "Log in with the data provided by your school!",
+  "loginLoginCard": "Login via login card",
+  "loginNotPossibleCredentials": "Registration was not possible. Please check your access data!",
+  "loginNotPossibleInternet": "Registration was not possible. You need internet for registration!",
+  "myPlan": "My plan",
+  "name": "Name",
+  "no": "No",
+  "password": "Password",
+  "phone": "Phone",
+  "planModeForm": "Plan mode: ",
+  "pleaseConfirm": "Please confirm",
+  "publisher": "Publisher",
+  "pupil": "Learner",
+  "regular": "Regular",
+  "regularPlan": "Regular plan",
+  "scanCanceled": "Login via the login card was canceled",
+  "school": "School",
+  "schoolNotSupported": "The school from the login card is not supported.",
+  "schoolPlan": "School plan",
+  "schoolTypes": "School types",
+  "settings": "Settings",
+  "shareAsPicture": "Share as picture",
+  "shareAsText": "Share as text",
+  "standin": "Standin",
+  "standInPlan": "Standin plan",
+  "store": "Store",
+  "storeUnknown": "Installed via no known store",
+  "substituteTeacher": "Substitute teacher: {teacherName}",
+  "@substituteTeacher": {
+    "placeholders": {
+      "teacherName": {
+        "type": "String",
+        "example": "M. Musterfrau"
+      }
+    }
+  },
+  "subtitle": "Standin Plan App made by Friedrich-List-Schule Wiesbaden",
+  "supervision": "Supervision",
+  "teacher": "Teacher",
+  "title": "FLS Standin plan",
+  "username": "Username",
+  "version": "Version",
+  "from": "from",
+  "website": "Website",
+  "yes": "Yes",
+  "youGetNotified": "You will be notified when there are new\n substitutions.\nPull to update."
+}
