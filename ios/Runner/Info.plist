@@ -40,8 +40,10 @@
 	<true/>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Share of standin plan entries</string>
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>This app needs camera access to scan login QR codes</string>
+	<string>This app needs camera access to scan login QR codes (alternative, login via text input)</string>
 	<key>NSContactsUsageDescription</key>
 	<string>Access contacts for event attendee editing.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
