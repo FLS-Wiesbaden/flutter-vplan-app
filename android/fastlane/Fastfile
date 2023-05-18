@@ -25,8 +25,9 @@ platform :android do
   desc "Deploy a new version to the Google Play Beta lane"
   lane :beta do
     setup_ci
-    increment_build_number(build_number: ENV['CI_JOB_ID'])
-    gradle(task: "clean bundleRelease")
+    gradle(
+      task: "clean bundleRelease assembleRelease"
+    )
     upload_to_play_store(
       track: 'closed-beta', 
       aab: '../build/app/outputs/bundle/release/app-release.aab',
@@ -41,8 +42,7 @@ platform :android do
   desc "Deploy a new version to the Google Play"
   lane :deploy do
     setup_ci
-    increment_build_number(build_number: ENV['CI_JOB_ID'])
-    gradle(task: "clean bundleRelease")
+    gradle(task: "clean bundleRelease assembleRelease")
     upload_to_play_store( 
       aab: '../build/app/outputs/bundle/release/app-release.aab',
       skip_upload_apk: true, 
