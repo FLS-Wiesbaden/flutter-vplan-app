@@ -14,6 +14,7 @@
 # update_fastlane
 
 default_platform(:android)
+opt_out_usage
 
 platform :android do
   desc "Runs all the tests"
@@ -23,13 +24,32 @@ platform :android do
 
   desc "Deploy a new version to the Google Play Beta lane"
   lane :beta do
-    gradle(task: "clean assembleRelease")
-    upload_to_play_store(track: 'closed-beta')
+    setup_ci
+    gradle(
+      task: "clean bundleRelease assembleRelease"
+    )
+    upload_to_play_store(
+      track: 'closed-beta', 
+      aab: '../build/app/outputs/bundle/release/app-release.aab',
+      skip_upload_apk: true, 
+      skip_upload_metadata: true, 
+      skip_upload_changelogs: true, 
+      skip_upload_images: true, 
+      skip_upload_screenshots: true
+    )
   end
 
   desc "Deploy a new version to the Google Play"
   lane :deploy do
-    gradle(task: "clean assembleRelease")
-    upload_to_play_store
+    setup_ci
+    gradle(task: "clean bundleRelease assembleRelease")
+    upload_to_play_store( 
+      aab: '../build/app/outputs/bundle/release/app-release.aab',
+      skip_upload_apk: true, 
+      skip_upload_metadata: true, 
+      skip_upload_changelogs: true, 
+      skip_upload_images: true, 
+      skip_upload_screenshots: true
+    )
   end
 end

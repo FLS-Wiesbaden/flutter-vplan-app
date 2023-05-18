@@ -1,0 +1,13 @@
+Diese App bietet die Möglichkeit auf die Vertretungsinformationen der Friedrich-List-Schule Wiesbaden (FLS) zuzugreifen.
+
+Ebenso ist es möglich, sich seinen Stundenplan oder Kurse zusammenzustellen, welche besucht werden. Hier werden auch die regulären Stunden, die keine Vertretungen enthalten, dargestellt.
+
+Gesamtfunktionsliste:
+ - Anzeige von Gesamtvertretungspläne für die FLS Wiesbaden
+ - Wechsel zwischen Schüler- und Lehreransicht
+ - Zusammenstellen / Filtern der passenden Vertretungs- und Planinformationen
+ - Darstellung auch von Regulärplänen nach Einstellung und Customizing
+ - Darstellung von Ferien- und Feiertagen
+ - Effiziente automatische Aktualisierung der notwendigen Daten (Intervall ca. 1 h, jedoch nicht im Energiesparmodus)
+ - Benachrichtigung bei Planänderungen (sofern die Filtereinstellungen vorgenommen wurden)
+ - Anmeldung per manueller Eingabe oder per Anmeldekarte (zu finden im jeweiligen Schulportal oder auf der Schulwebseite)

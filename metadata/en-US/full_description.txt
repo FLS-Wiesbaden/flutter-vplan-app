@@ -1,0 +1,13 @@
+This app offers the possibility to access the substitution information of the Friedrich-List-Schule Wiesbaden (FLS).
+
+Likewise, it is possible to compile one's schedule or courses that are attended. Regular lessons that do not include substitutions are also displayed here.
+
+Overall feature list:
+ - Display of overall substitution schedules for FLS Wiesbaden.
+ - Switch between student and teacher view
+ - Compilation / filtering of suitable substitution and schedule information
+ - Display also of regular schedules according to settings and customizing
+ - Display of vacation and public holidays
+ - Efficient automatic update of necessary data (interval approx. 1 h, but not in energy saving mode)
+ - Notification of plan changes (if filter settings have been made)
+ - Registration by manual input or by registration card (to be found in the respective school portal or on the school website)
