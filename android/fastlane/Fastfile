@@ -1,7 +1,8 @@
 # This file contains the fastlane.tools configuration
 # You can find the documentation at https://docs.fastlane.tools
 #
-# For a list of all available actions, check out
+# For a list of all available actions, 
+check out
 #
 #     https://docs.fastlane.tools/actions
 #
@@ -14,6 +15,7 @@
 # update_fastlane
 
 default_platform(:android)
+opt_out_usage
 
 platform :android do
   desc "Runs all the tests"
@@ -24,12 +26,27 @@ platform :android do
   desc "Deploy a new version to the Google Play Beta lane"
   lane :beta do
     gradle(task: "clean assembleRelease")
-    upload_to_play_store(track: 'closed-beta')
+    upload_to_play_store(
+      track: 'closed-beta', 
+      aab_paths: ['../build/app/outputs/bundle'],
+      skip_upload_apk: true, 
+      skip_upload_metadata: true, 
+      skip_upload_changelogs: true, 
+      skip_upload_images: true, 
+      skip_upload_screenshots: true
+    )
   end
 
   desc "Deploy a new version to the Google Play"
   lane :deploy do
     gradle(task: "clean assembleRelease")
-    upload_to_play_store
+    upload_to_play_store( 
+      aab_paths: ['../build/app/outputs/bundle'],
+      skip_upload_apk: true, 
+      skip_upload_metadata: true, 
+      skip_upload_changelogs: true, 
+      skip_upload_images: true, 
+      skip_upload_screenshots: true
+    )
   end
 end
