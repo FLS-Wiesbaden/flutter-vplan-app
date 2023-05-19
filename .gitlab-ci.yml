@@ -119,7 +119,7 @@ build:android:
     - curl --silent "https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer" | bash
     - |
       if [[ -f "$SEC_FILES/key.properties" ]]; then 
-        sed -i "§#path#§$SEC_FILES§" $SEC_FILES/key.properties
+        sed -i "s#\#path\##$SEC_FILES#" $SEC_FILES/key.properties
         ln -s $SEC_FILES/key.properties android/key.properties
         echo "Copied / linked key properties files to android"
         ls -al android/ | grep properties
