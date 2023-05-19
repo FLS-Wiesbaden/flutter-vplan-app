@@ -109,7 +109,7 @@ build:android:
         export PKG_RELEASE_TYPE="debug"
       fi
       export PKG_VERSION="`grep 'version: ' pubspec.yaml | sed -E 's/version: (.+)\+([0-9]+)/\1_\2/'`"
-      export SEC_FILES="$PATH/private_keys"
+      export SEC_FILES="$CI_PROJECT_DIR/private_keys"
     - |
       echo "Prepare gem handling"
       pushd android
