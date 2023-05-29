@@ -141,6 +141,7 @@
   "version": "Version",
   "from": "von",
   "website": "Homepage",
+  "sourcecode": "Quellcode",
   "yes": "Ja",
   "youGetNotified": "Du wirst benachrichtigt, wenn neue\n Vertretungen vorliegen.\nZiehen zum Aktualisieren."
 }

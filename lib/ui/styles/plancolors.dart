@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 /// differences.
 class PlanColors {
   static const _primaryTextColor = 0xFF172B4C;
-  static const _secondaryTextColor = 0xFFA4AEBA;
+  static const _secondaryTextColor = 0xFF7E858F;
   static const _selectedIconColor = _primaryTextColor;
   static const _iconColor = _secondaryTextColor;
   static const _borderColor = 0xFFE3E4E8;
