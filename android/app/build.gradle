@@ -57,7 +57,7 @@ android {
         applicationId "de.fls_wiesbaden.vplan"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion 30
+        minSdkVersion 28
         targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -75,10 +75,11 @@ android {
     buildTypes {
         release {
             // Signing with the debug keys for now, so `flutter run --release` works.
-            println "Release builds"
             if (keystorePropertiesFile.exists()) {
+                println "Release builds - with release signing."
                 signingConfig signingConfigs.release
             } else {
+                println "Release builds - with debug signing."
                 signingConfig signingConfigs.debug
             }
         }

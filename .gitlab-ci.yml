@@ -109,7 +109,7 @@ build:android:
         export PKG_RELEASE_TYPE="debug"
       fi
       export PKG_VERSION="`grep 'version: ' pubspec.yaml | sed -E 's/version: (.+)\+([0-9]+)/\1_\2/'`"
-      export SEC_FILES="$PATH/private_keys"
+      export SEC_FILES="$CI_PROJECT_DIR/private_keys"
     - |
       echo "Prepare gem handling"
       pushd android
@@ -119,8 +119,10 @@ build:android:
     - curl --silent "https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer" | bash
     - |
       if [[ -f "$SEC_FILES/key.properties" ]]; then 
-        sed -i "/#path#/$SEC_FILES/" $SEC_FILES/key.properties
+        sed -i "s#\#path\##$SEC_FILES#" $SEC_FILES/key.properties
         ln -s $SEC_FILES/key.properties android/key.properties
+        echo "Copied / linked key properties files to android"
+        ls -al android/ | grep properties
       fi
     - flutter config --no-analytics
     - flutter pub get

@@ -66,6 +66,24 @@ class AboutUi extends StatelessWidget {
                 ),
                 TableRow(
                   children: [
+                    Text(AppLocalizations.of(context)!.sourcecode, style: primStyle),
+                    RichText(
+                      text: TextSpan(
+                        text: 'app.fls-wiesbaden.de',
+                        style: scndStyle,
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () async { 
+                            final Uri url = Uri.parse("https://app.fls-wiesbaden.de");
+                            if (await canLaunchUrl(url)) {
+                              await launchUrl(url, mode: LaunchMode.externalApplication);
+                            }
+                          },
+                      )
+                    )
+                  ]
+                ),
+                TableRow(
+                  children: [
                     Text("", style: primStyle),
                     Text("", style: scndStyle)
                   ]

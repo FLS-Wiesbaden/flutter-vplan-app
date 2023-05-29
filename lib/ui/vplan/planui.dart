@@ -111,7 +111,7 @@ class _PlanUiState extends State<PlanUi> with TickerProviderStateMixin {
                             builder: (context, value, _) {
                               return DotsIndicator(
                                 dotsCount: snapshot.data!.length(),
-                                position: value.toDouble(),
+                                position: value,
                                 decorator: DotsDecorator(
                                   color: PlanColors
                                       .PageIndicatorColor, // Inactive color

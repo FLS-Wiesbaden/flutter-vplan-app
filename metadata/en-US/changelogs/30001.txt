@@ -1,0 +1,1 @@
+ - Minimum Android version reduced to API level 28
