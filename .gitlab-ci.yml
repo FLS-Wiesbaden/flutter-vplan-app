@@ -100,7 +100,7 @@ build:android:
   before_script:
     - export PATH="$PATH:$HOME/.pub-cache/bin"
     - |
-      export PKG_BUILD_FLAGS="$PKG_BUILD_FLAGS --ignore-deprecation"
+      export PKG_BUILD_FLAGS="$PKG_BUILD_FLAGS --ignore-deprecation --multidex"
       if [[ $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH ]]; then
         export PKG_BUILD_FLAGS="$PKG_BUILD_FLAGS --release"
         export PKG_RELEASE_TYPE="release"
