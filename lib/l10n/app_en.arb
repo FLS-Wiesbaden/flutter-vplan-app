@@ -143,5 +143,10 @@
   "website": "Website",
   "sourcecode": "Source code",
   "yes": "Yes",
-  "youGetNotified": "You will be notified when there are new\n substitutions.\nPull to update."
+  "youGetNotified": "You will be notified when there are new\n substitutions.\nPull to update.",
+  "pushNotification": "Push notification: ",
+  "enabled": "Enabled",
+  "disabled": "Disabled",
+  "activate": "Activate",
+  "disable": "Disable"
 }

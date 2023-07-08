@@ -86,6 +86,7 @@ class PlanStorage extends ChangeNotifier {
     }
     var body = '';
     final int numberEntries = newEntries.length;
+    // TODO: add localization for this notification!
     if (numberEntries > 1) {
       body = "Es liegen $numberEntries neue Vertretungsplaneinträge vor.";
     } else if (numberEntries > 0) {
@@ -228,6 +229,9 @@ class PlanStorage extends ChangeNotifier {
       'planMode': Config.getInstance().mode == PlanType.teacher ? 'teacher' : 'pupil',
       'view': Config.getInstance().mode == PlanType.teacher ? 'teacher' : 'pupil'
     };
+    if (Config.getInstance().notifyRegistered) {
+      queryParameters['up'] = Config.getInstance().notifyEndpoint;
+    }
     Map<String, String> headers = {};
     if (_etag != null) {
       headers[HttpHeaders.ifNoneMatchHeader] = _etag!;

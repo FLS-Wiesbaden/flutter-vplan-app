@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 
 import 'package:de_fls_wiesbaden_vplan/storage/config.dart';
 import 'package:de_fls_wiesbaden_vplan/storage/planstorage.dart';
@@ -13,6 +14,7 @@ import 'package:logging/logging.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:workmanager/workmanager.dart';
+import 'package:unifiedpush/unifiedpush.dart';
 
 void _configureLogger() {
   Logger.root.level = Level.ALL; // defaults to Level.INFO
@@ -39,6 +41,9 @@ void callbackDispatcher() {
         case Workmanager.iOSBackgroundTask:
           log.info("iOS refresh task started.");
           PlanStorage().refresh();
+          break;
+        default:
+          log.info("Unknown task is triggered: $task");
           break;
       }
     } on Exception catch (error, stackTrace) {
@@ -155,6 +160,14 @@ class _FlsVplanAppState extends State<FlsVplanApp> {
     @override
   void initState() {
     super.initState();
+    UnifiedPush.initialize(
+      onNewEndpoint:
+          onNewEndpoint, // takes (String endpoint, String instance) in args
+      onRegistrationFailed: onRegistrationFailed, // takes (String instance)
+      onUnregistered: onUnregistered, // takes (String instance)
+      onMessage: pushNotifyReceived, // takes (String message, String instance) in args
+    );
+
     _isAndroidPermissionGranted();
     _requestPermissions();
   }
@@ -219,6 +232,51 @@ class _FlsVplanAppState extends State<FlsVplanApp> {
         log.info("Notifications ${_notificationsEnabled ? "granted" : "not granted"}");
       });
     }
+  }
+
+  void onNewEndpoint(String endpoint, String instance) {
+    final log = Logger(vplanLoggerId);
+    log.fine("Got new endpoint for instance $instance (waiting: $vplanNotifyInstance)");
+
+    if (instance != vplanNotifyInstance) {
+      return;
+    }
+    Config cfg = Config.getInstance();
+    cfg.setNotifyRegistered(true);
+    cfg.setNotifyEndpoint(endpoint);
+    setState(() {
+      log.info("Notification endpoint is $endpoint");
+    });
+  }
+
+  void onRegistrationFailed(String instance) {
+    onUnregistered(instance);
+  }
+
+  void onUnregistered(String instance) {
+    final log = Logger(vplanLoggerId);
+    log.fine("Got new endpoint for instance $instance (waiting: $vplanNotifyInstance)");
+
+    if (instance != vplanNotifyInstance) {
+      return;
+    }
+    Config cfg = Config.getInstance();
+    cfg.setNotifyRegistered(false);
+    setState(() {
+      log.info("Notification registration is disabled.");
+    });
+  }
+
+  static Future<bool> pushNotifyReceived(Uint8List encMessage, String instance) async {
+    _configureLogger();
+    final log = Logger(vplanLoggerId);
+    var payload = utf8.decode(encMessage);
+
+    log.fine("Got push notification for $instance: $payload");
+    PlanStorage().refresh();
+
+    return Future.value(true); 
+
   }
 
   // This widget is the root of your application.

@@ -25,6 +25,8 @@ class Config extends ChangeNotifier {
   static const configPlanTeacher = "teacher";
   static const configPlanPupil = "pupil";
   static const configDefaultSchool = "fls";
+  static const configKeyNotifyRegistered = "notifyRegistered";
+  static const configKeyNotifyEndpoint = "notifyEndpoint";
 
   static Config? _instance;
   static List<School> schools = [
@@ -40,6 +42,8 @@ class Config extends ChangeNotifier {
   bool _addRegularPlan = true;
   int _numberDays = 5;
   String _schoolName = configDefaultSchool;
+  String _notifyEndpoint = "";
+  bool _notifyRegistered = false;
   late IStorage _storage;
   late School _school;
 
@@ -90,6 +94,23 @@ class Config extends ChangeNotifier {
     return _school;
   }
 
+  String get notifyEndpoint {
+    return _notifyEndpoint;
+  }
+  bool get notifyRegistered {
+    return _notifyRegistered;
+  }
+
+  void setNotifyRegistered(bool registered) async {
+    _notifyRegistered = registered;
+    await _storage.write(key: configKeyNotifyRegistered, value: registered.toString()).whenComplete(() => notifyListeners());
+  }
+
+  void setNotifyEndpoint(String notifyEndpoint) async {
+    _notifyEndpoint = notifyEndpoint;
+    await _storage.write(key: configKeyNotifyEndpoint, value: notifyEndpoint);
+  }
+
   /// Load basic configuration from storage
   /// which are mandatory to know them at
   /// every point of time.
@@ -101,6 +122,8 @@ class Config extends ChangeNotifier {
     _numberDays = await getNumberDays();
     _schoolName = await getSchoolName();
     _school = getSchoolObj();
+    _notifyRegistered = await getNotifyRegistered();
+    _notifyEndpoint = await getNotifyEndpoint();
     log.info("Config: Loaded");
   }
 
@@ -186,6 +209,24 @@ class Config extends ChangeNotifier {
     }
     _schoolName = school;
     await _storage.write(key: configKeySchool, value: school).whenComplete(() => notifyListeners());
+  }
+
+  /// Get school identifier.
+  Future<bool> getNotifyRegistered() async {
+    if (await _storage.containsKey(key: configKeyNotifyRegistered)) {
+      return (await _storage.read(key: configKeyNotifyRegistered))! == 'true';
+    } else {
+      return false;
+    }
+  }
+
+  /// Get school identifier.
+  Future<String> getNotifyEndpoint() async {
+    if (await _storage.containsKey(key: configKeyNotifyEndpoint)) {
+      return (await _storage.read(key: configKeyNotifyEndpoint))!;
+    } else {
+      return "";
+    }
   }
 
   /// Set auth user (can be a client_id)

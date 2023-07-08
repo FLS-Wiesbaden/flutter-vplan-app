@@ -4,6 +4,7 @@ import 'package:de_fls_wiesbaden_vplan/storage/config.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/helper/exceptions.dart';
 import 'package:http/http.dart' as http;
 import 'package:de_fls_wiesbaden_vplan/controllers/authcontroller.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 Future<void> reinitateLogin({http.StreamedResponse? response, Exception? exception}) async {
   return AuthController().login(notify: false).then((value) => null);
@@ -126,6 +127,9 @@ Future<http.StreamedResponse> defaultApiRequest(
   if (queryParameters != null) {
     uri = uri.replace(queryParameters: queryParameters);
   }
+  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+  String appName = packageInfo.appName;
+  String appVersion = packageInfo.version;
 
   try {
     return apiRequest(() async {
@@ -150,6 +154,11 @@ Future<http.StreamedResponse> defaultApiRequest(
             ifAbsent: () => authHeader
           );
         }
+        req.headers.update(
+          HttpHeaders.userAgentHeader,
+          (value) => "$appName/$appVersion",
+          ifAbsent: () => "$appName/$appVersion"
+        );
         return req.send();
       }, 
       onLastRetryFailed: apiFailed, 

@@ -143,5 +143,10 @@
   "website": "Homepage",
   "sourcecode": "Quellcode",
   "yes": "Ja",
-  "youGetNotified": "Du wirst benachrichtigt, wenn neue\n Vertretungen vorliegen.\nZiehen zum Aktualisieren."
+  "youGetNotified": "Du wirst benachrichtigt, wenn neue\n Vertretungen vorliegen.\nZiehen zum Aktualisieren.",
+  "pushNotification": "Push-Benachrichtigung: ",
+  "enabled": "Aktiviert",
+  "disabled": "Deaktiviert",
+  "activate": "Aktivieren",
+  "disable": "Deaktivieren"
 }
