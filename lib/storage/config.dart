@@ -104,7 +104,7 @@ class Config extends ChangeNotifier {
 
   void setNotifyRegistered(bool registered) async {
     _notifyRegistered = registered;
-    await _storage.write(key: configKeyNotifyRegistered, value: registered.toString()).whenComplete(() => notifyListeners());
+    await _storage.write(key: configKeyNotifyRegistered, value: registered.toString());
   }
 
   void setNotifyEndpoint(String notifyEndpoint) async {

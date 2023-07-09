@@ -45,9 +45,10 @@ class PlanStorage extends ChangeNotifier {
 
   void _depDataChanged() {
     final log = Logger(vplanLoggerId);
-    log.fine("Some dependencies changed. Re-schedule personal plan reload.");
+    log.fine("Some dependencies changed. Re-schedule personal plan reload (${_depRefresh != null ? "Already set" : "Not set"}).");
     _depRefresh ??= Future.delayed(const Duration(milliseconds: 500), () {
         final log = Logger(vplanLoggerId);
+        log.fine("Future for _depDataChanged started.");
         if (_plan != null) {
           _personalPlan = Plan.copyFilter(
             _plan!, bookmarked: _scs.getBookmarked(), bookmarkedLessons: _scs.getBookmarkedLessonsHash(), bookmarkedTeachers: _tcs.getBookmarked()
@@ -133,6 +134,9 @@ class PlanStorage extends ChangeNotifier {
       log.fine("Saved school class storage after setting plan.");
     }
 
+    // DEBUG
+    log.finer("Bookmarks: ${_tcs.getBookmarked().toString()}");
+
     Plan prevPersonalPlan = _personalPlan ?? Plan(list: [], lastUpdate: null);
     _plan = plan;
     _standinPlan = Plan.copyFilter(plan, onlyStandin: true);
@@ -184,7 +188,7 @@ class PlanStorage extends ChangeNotifier {
   Future<Plan> load({bool refresh = false, bool personalPlan = false}) async {
     final log = Logger(vplanLoggerId);
     _loading = true;
-    log.fine("Plan::load: load in progress.");
+    log.fine("Plan::load: load in progress (refresh? ${refresh.toString()}).");
     await _scs.load();
     log.fine("Plan::load: School class storage loaded.");
     await _tcs.load();

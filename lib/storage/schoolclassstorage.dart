@@ -225,7 +225,7 @@ class SchoolClassStorage extends ChangeNotifier {
           save();
         });
       } else {
-        _types[e.schoolTypeId]!.merge(e);
+        _types[e.schoolTypeId.toString()]!.merge(e);
       }
     }
   }
