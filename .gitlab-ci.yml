@@ -222,6 +222,7 @@ build:ios:
     # switching xcode is not supported yet.
     #- xcode-select -s $DEVELOPER_DIR
     - flutter config --no-analytics
+    - flutter upgrade
     - flutter pub get
     - flutter clean
     - flutter gen-l10n
