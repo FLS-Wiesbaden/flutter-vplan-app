@@ -9,7 +9,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
-import 'package:unifiedpush/unifiedpush.dart';
 
 /// Widget to show the general settings.
 /// E.g. plan mode
@@ -102,26 +101,9 @@ class _GeneralSettingsUi extends State<GeneralSettingsUi> {
             ]),
             Row(children: [
               Text(AppLocalizations.of(context)!.pushNotification, style: TextStyle(color: PlanColors.PrimaryTextColor, fontWeight: FontWeight.bold),),
-              ElevatedButton(
-                child: Text(
-                  config.notifyRegistered ? AppLocalizations.of(context)!.disable : AppLocalizations.of(context)!.activate
-                ),
-                onPressed: () async {
-                  if (config.notifyRegistered) {
-                    UnifiedPush.unregister(vplanNotifyInstance);
-                    setState(() {
-                      config.setNotifyRegistered(false);
-                    });
-                  } else {
-                    UnifiedPush.removeNoDistributorDialogACK();
-                    UnifiedPush.registerAppWithDialog(
-                        context, vplanNotifyInstance, [featureAndroidBytesMessage]);
-                    setState(() {
-                      // do nothing
-                    });
-                  }
-                },
-              )
+              Text(
+                config.notifyRegistered ? AppLocalizations.of(context)!.enabled : AppLocalizations.of(context)!.disabled, 
+                style: TextStyle(color: PlanColors.SecondaryTextColor),),
             ]),
             Text(
               AppLocalizations.of(context)!.school, 

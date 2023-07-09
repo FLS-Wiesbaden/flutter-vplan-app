@@ -2,6 +2,7 @@ import 'package:de_fls_wiesbaden_vplan/models/school.dart';
 import 'package:de_fls_wiesbaden_vplan/storage/storage.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/helper/exceptions.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/helper/consts.dart';
+import 'package:de_fls_wiesbaden_vplan/utils/notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
@@ -206,6 +207,9 @@ class Config extends ChangeNotifier {
     // Throws an exception, if school cannot be found.
     if (Config.schools.indexWhere((element) => element.id == school) < 0) {
       throw SchoolNotFoundException("School $school not found!");
+    }
+    if (_schoolName != school) {
+      BackgroundPush.unregister(_school.notifyInstance);
     }
     _schoolName = school;
     await _storage.write(key: configKeySchool, value: school).whenComplete(() => notifyListeners());
