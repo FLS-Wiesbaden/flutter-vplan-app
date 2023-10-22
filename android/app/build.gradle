@@ -82,6 +82,11 @@ android {
                 println "Release builds - with debug signing."
                 signingConfig signingConfigs.debug
             }
+            matchingFallbacks = ['release']
+        }
+        debug {
+            matchingFallbacks = ['debug']
+            signingConfig signingConfigs.debug
         }
     }
 }
