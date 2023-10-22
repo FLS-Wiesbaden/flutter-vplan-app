@@ -1,0 +1,3 @@
+ - Added restrictions for switching to teacher mode
+ - Changed base texts for german
+ - Tooltips added in settings menu
