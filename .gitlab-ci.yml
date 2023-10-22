@@ -6,7 +6,7 @@ variables:
   #    - "13.2"
   #    - "13.2.1"
   #    - "14.0.1"
-  flutterVersion: "3.7.8"
+  flutterVersion: "3.13.6"
   PKG_BUILD_FLAGS: "--no-obfuscate"
 
 stages:
@@ -100,7 +100,7 @@ build:android:
   before_script:
     - export PATH="$PATH:$HOME/.pub-cache/bin"
     - |
-      export PKG_BUILD_FLAGS="$PKG_BUILD_FLAGS --ignore-deprecation"
+      export PKG_BUILD_FLAGS="$PKG_BUILD_FLAGS --ignore-deprecation --multidex"
       if [[ $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH ]]; then
         export PKG_BUILD_FLAGS="$PKG_BUILD_FLAGS --release"
         export PKG_RELEASE_TYPE="release"
@@ -115,6 +115,7 @@ build:android:
       pushd android
       bundle install
       popd
+    - echo "Used Java-Version `java -version`"
   script:
     - curl --silent "https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer" | bash
     - |
@@ -221,6 +222,7 @@ build:ios:
     # switching xcode is not supported yet.
     #- xcode-select -s $DEVELOPER_DIR
     - flutter config --no-analytics
+    - flutter upgrade --force
     - flutter pub get
     - flutter clean
     - flutter gen-l10n

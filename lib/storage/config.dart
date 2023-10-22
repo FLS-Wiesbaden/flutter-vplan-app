@@ -2,6 +2,7 @@ import 'package:de_fls_wiesbaden_vplan/models/school.dart';
 import 'package:de_fls_wiesbaden_vplan/storage/storage.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/helper/exceptions.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/helper/consts.dart';
+import 'package:de_fls_wiesbaden_vplan/utils/notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
@@ -21,10 +22,13 @@ class Config extends ChangeNotifier {
   static const configKeyAuthUser = "authUser";
   static const configKeyAuthSecret = "authSecret";
   static const configKeyAuthJwt = "authJwt";
+  static const configKeyPermTeacher = "permTeacher";
   static const configKeyFirstCall = "firstCall";
   static const configPlanTeacher = "teacher";
   static const configPlanPupil = "pupil";
   static const configDefaultSchool = "fls";
+  static const configKeyNotifyRegistered = "notifyRegistered";
+  static const configKeyNotifyEndpoint = "notifyEndpoint";
 
   static Config? _instance;
   static List<School> schools = [
@@ -40,6 +44,9 @@ class Config extends ChangeNotifier {
   bool _addRegularPlan = true;
   int _numberDays = 5;
   String _schoolName = configDefaultSchool;
+  String _notifyEndpoint = "";
+  bool _notifyRegistered = false;
+  bool _teacherPermission = false;
   late IStorage _storage;
   late School _school;
 
@@ -57,6 +64,7 @@ class Config extends ChangeNotifier {
     } else {
       _storage = storage;
     }
+    _teacherPermission = false;
   }
 
   static Config getInstance() {
@@ -90,6 +98,27 @@ class Config extends ChangeNotifier {
     return _school;
   }
 
+  String get notifyEndpoint {
+    return _notifyEndpoint;
+  }
+  bool get notifyRegistered {
+    return _notifyRegistered;
+  }
+
+  bool get teacherPermission {
+    return _teacherPermission;
+  }
+
+  void setNotifyRegistered(bool registered) async {
+    _notifyRegistered = registered;
+    await _storage.write(key: configKeyNotifyRegistered, value: registered.toString());
+  }
+
+  void setNotifyEndpoint(String notifyEndpoint) async {
+    _notifyEndpoint = notifyEndpoint;
+    await _storage.write(key: configKeyNotifyEndpoint, value: notifyEndpoint);
+  }
+
   /// Load basic configuration from storage
   /// which are mandatory to know them at
   /// every point of time.
@@ -101,6 +130,9 @@ class Config extends ChangeNotifier {
     _numberDays = await getNumberDays();
     _schoolName = await getSchoolName();
     _school = getSchoolObj();
+    _notifyRegistered = await getNotifyRegistered();
+    _notifyEndpoint = await getNotifyEndpoint();
+    _teacherPermission = await getTeacherPermission();
     log.info("Config: Loaded");
   }
 
@@ -184,8 +216,29 @@ class Config extends ChangeNotifier {
     if (Config.schools.indexWhere((element) => element.id == school) < 0) {
       throw SchoolNotFoundException("School $school not found!");
     }
+    if (_schoolName != school) {
+      BackgroundPush.unregister(_school.notifyInstance);
+    }
     _schoolName = school;
     await _storage.write(key: configKeySchool, value: school).whenComplete(() => notifyListeners());
+  }
+
+  /// Get school identifier.
+  Future<bool> getNotifyRegistered() async {
+    if (await _storage.containsKey(key: configKeyNotifyRegistered)) {
+      return (await _storage.read(key: configKeyNotifyRegistered))! == 'true';
+    } else {
+      return false;
+    }
+  }
+
+  /// Get school identifier.
+  Future<String> getNotifyEndpoint() async {
+    if (await _storage.containsKey(key: configKeyNotifyEndpoint)) {
+      return (await _storage.read(key: configKeyNotifyEndpoint))!;
+    } else {
+      return "";
+    }
   }
 
   /// Set auth user (can be a client_id)
@@ -213,6 +266,22 @@ class Config extends ChangeNotifier {
   /// Get last saved JWT
   Future<String?> getAuthJwt() {
     return _storage.read(key: configKeyAuthJwt);
+  }
+
+  Future<bool> getTeacherPermission() async {
+    if (await _storage.containsKey(key: configKeyPermTeacher)) {
+      return (await _storage.read(key: configKeyPermTeacher))! == 'true';
+    } else {
+      return false;
+    }
+  }
+
+  Future<void> setTeacherPermission(bool hasPerm) async {
+    _teacherPermission = hasPerm;
+    if (!hasPerm) {
+      this.setMode(PlanType.pupil);
+    }
+    await _storage.write(key: configKeyPermTeacher, value: hasPerm.toString());
   }
 
   /// Return true if its the first time this app is

@@ -1,0 +1,1 @@
+ - Rebuild of minimum Android version reduced to API level 28

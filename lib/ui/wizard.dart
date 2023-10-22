@@ -53,6 +53,7 @@ class _Wizard extends State<Wizard> {
                   Navigator.of(context).pop();
                 } else {
                   await Config.getInstance().setFirstCallDone(true);
+                  ps.refresh();
                   // ignore: use_build_context_synchronously
                   Navigator.of(context).pop();
                 }

@@ -270,26 +270,18 @@ class _AuthUi extends State<AuthUi> {
                                                                         builder:
                                                                             (context) =>
                                                                                 const AuthScanUi()));
-                                                            if (answer !=
-                                                                null) {
+                                                            if (answer != null) {
                                                               try {
-                                                                log.finer(
-                                                                    "Scanned $answer");
-                                                                final object =
-                                                                    jsonDecode(
-                                                                        answer);
+                                                                log.finer("Scanned $answer");
+                                                                final object = jsonDecode(answer);
                                                                 userName.value =
-                                                                    TextEditingValue(
-                                                                        text: object[
-                                                                            'clientId']);
-                                                                loginSecret
-                                                                        .value =
-                                                                    TextEditingValue(
-                                                                        text: object[
-                                                                            'clientSecret']);
-                                                                config.setSchool(
-                                                                    object[
-                                                                        'school']);
+                                                                    TextEditingValue(text: object['clientId']);
+                                                                loginSecret.value =
+                                                                    TextEditingValue(text: object['clientSecret']);
+                                                                config.setSchool(object['school']);
+                                                                if (object['mode'] != null) {
+                                                                  config.setMode(object['mode']);
+                                                                }
                                                                 await _send();
                                                               } on SchoolNotFoundException {
                                                                 setState(() {

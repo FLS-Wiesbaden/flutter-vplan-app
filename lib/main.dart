@@ -5,40 +5,37 @@ import 'package:de_fls_wiesbaden_vplan/storage/planstorage.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/authui.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/helper/consts.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/styles/plancolors.dart';
+import 'package:de_fls_wiesbaden_vplan/utils/logger.dart';
+import 'package:de_fls_wiesbaden_vplan/utils/notifications.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:logging/logging.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:workmanager/workmanager.dart';
-
-void _configureLogger() {
-  Logger.root.level = Level.ALL; // defaults to Level.INFO
-  Logger.root.onRecord.listen((record) {
-    // ignore: avoid_print
-    print('${record.time} ($vplanAppId) [${record.level.name}]: ${record.message}');
-  });
-}
 
 // Notifications
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 @pragma('vm:entry-point') // Mandatory if the App is obfuscated or using Flutter 3.1+
 void callbackDispatcher() {
-  _configureLogger();
-  final log = Logger(vplanLoggerId);
+  configureVPlanLogger();
+  final log = getVPlanLogger();
   log.info("Background task started.");
   Workmanager().executeTask((task, inputData) async {
     try {
       switch (task) {
         case vplanRefreshTask:
+        case 'refreshTask':
           log.info("Android refresh task started.");
           PlanStorage().refresh();
           break;
         case Workmanager.iOSBackgroundTask:
           log.info("iOS refresh task started.");
           PlanStorage().refresh();
+          break;
+        default:
+          log.info("Unknown task is triggered: $task");
           break;
       }
     } on Exception catch (error, stackTrace) {
@@ -58,8 +55,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Set logging
-  _configureLogger();
-  final log = Logger(vplanLoggerId);
+  configureVPlanLogger();
+  final log = getVPlanLogger();
   log.fine("App is starting,...");
 
   FlutterError.onError = (FlutterErrorDetails details) {
@@ -75,7 +72,10 @@ void main() async {
       isInDebugMode: false // If enabled it will post a notification whenever the task is running. Handy for debugging tasks
     );
     if (Platform.isAndroid) {
-      Workmanager().registerPeriodicTask(vplanRefreshTask, "refreshTask", frequency: const Duration(minutes: 60), constraints: Constraints(
+      Workmanager().registerPeriodicTask(vplanRefreshTask, vplanRefreshTask, 
+        frequency: const Duration(minutes: 60), 
+        tag: "refresh",
+        constraints: Constraints(
             networkType: NetworkType.connected,
             requiresBatteryNotLow: true
       ));
@@ -155,12 +155,14 @@ class _FlsVplanAppState extends State<FlsVplanApp> {
     @override
   void initState() {
     super.initState();
+    BackgroundPush.initialize();
+
     _isAndroidPermissionGranted();
     _requestPermissions();
   }
 
   Future<void> _isAndroidPermissionGranted() async {
-    final log = Logger(vplanLoggerId);
+    final log = getVPlanLogger();
     if (!kIsWeb && Platform.isAndroid) {
       final bool granted = await flutterLocalNotificationsPlugin
               .resolvePlatformSpecificImplementation<
@@ -178,7 +180,7 @@ class _FlsVplanAppState extends State<FlsVplanApp> {
   }
 
   Future<void> _requestPermissions() async {
-    final log = Logger(vplanLoggerId);
+    final log = getVPlanLogger();
     log.fine("Requesting for additional permissions.");
     bool? granted = false;
     if (!kIsWeb && Platform.isIOS) {
@@ -224,8 +226,9 @@ class _FlsVplanAppState extends State<FlsVplanApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final log = Logger(vplanLoggerId);
+    final log = getVPlanLogger();
     log.finest("Building FlsVplanApp");
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       localizationsDelegates: AppLocalizations.localizationsDelegates,

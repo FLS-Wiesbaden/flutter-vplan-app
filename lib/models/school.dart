@@ -1,3 +1,5 @@
+import 'package:de_fls_wiesbaden_vplan/ui/helper/consts.dart';
+
 class School {
   static const apiPath = "geco";
 
@@ -11,6 +13,10 @@ class School {
 
   String get apiEndpoint {
     return "$endpoint${apiPath.startsWith("/") ? "" : "/"}$apiPath";
+  }
+
+  String get notifyInstance {
+    return "$vplanNotifyInstance.$id";
   }
   
 }
