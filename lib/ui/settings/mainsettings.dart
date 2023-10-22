@@ -69,48 +69,62 @@ class _GeneralSettingsUi extends State<GeneralSettingsUi> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(children: [
-              Text(AppLocalizations.of(context)!.planModeForm, style: TextStyle(color: PlanColors.PrimaryTextColor, fontWeight: FontWeight.bold),),
-              Text(AppLocalizations.of(context)!.pupil),
-              Switch(
-                // This bool value toggles the switch.
-                value: config.mode == PlanType.teacher,
-                activeColor: PlanColors.SelectedIconColor,
-                onChanged: (bool value) {
-                  // This is called when the user toggles the switch.
-                  setState(() {
-                    config.setMode(value ? PlanType.teacher : PlanType.pupil);
-                  });
-                }
+            Tooltip(
+                message: AppLocalizations.of(context)!.helpSettingMode,
+                child: Row(children: [
+                  Text(AppLocalizations.of(context)!.planModeForm, style: TextStyle(color: PlanColors.PrimaryTextColor, fontWeight: FontWeight.bold),),
+                  Text(AppLocalizations.of(context)!.pupil),
+                  Switch(
+                    // This bool value toggles the switch.
+                    value: config.mode == PlanType.teacher,
+                    activeColor: PlanColors.SelectedIconColor,
+                    inactiveTrackColor: Colors.grey,
+                    onChanged: !config.teacherPermission ? null : (bool value) {
+                      // This is called when the user toggles the switch.
+                      setState(() {
+                        config.setMode(value ? PlanType.teacher : PlanType.pupil);
+                      });
+                    }
+                  ),
+                  Text(AppLocalizations.of(context)!.teacher),
+                ],
+                mainAxisSize: MainAxisSize.min
               ),
-              Text(AppLocalizations.of(context)!.teacher),
-            ]),
-            Row(children: [
-              Text(AppLocalizations.of(context)!.regularPlan, style: TextStyle(color: PlanColors.PrimaryTextColor, fontWeight: FontWeight.bold),),
-              Switch(
-                // This bool value toggles the switch.
-                value: config.addRegularPlan,
-                activeColor: PlanColors.SelectedIconColor,
-                onChanged: (bool value) {
-                  // This is called when the user toggles the switch.
-                  setState(() {
-                    config.setAddRegularPlan(value);
-                  });
-                }
-              )
-            ]),
+            ),
+            Tooltip(
+                message: AppLocalizations.of(context)!.helpSettingRegular,
+                child: Row(children: [
+                  Text(AppLocalizations.of(context)!.regularPlan, style: TextStyle(color: PlanColors.PrimaryTextColor, fontWeight: FontWeight.bold),),
+                  Switch(
+                    // This bool value toggles the switch.
+                    value: config.addRegularPlan,
+                    activeColor: PlanColors.SelectedIconColor,
+                    onChanged: (bool value) {
+                      // This is called when the user toggles the switch.
+                      setState(() {
+                        config.setAddRegularPlan(value);
+                      });
+                    }
+                  )
+                ],
+                mainAxisSize: MainAxisSize.min
+              ),
+            ),
             Row(children: [
               Text(AppLocalizations.of(context)!.pushNotification, style: TextStyle(color: PlanColors.PrimaryTextColor, fontWeight: FontWeight.bold),),
               Text(
                 config.notifyRegistered ? AppLocalizations.of(context)!.enabled : AppLocalizations.of(context)!.disabled, 
                 style: TextStyle(color: PlanColors.SecondaryTextColor),),
             ]),
-            Text(
-              AppLocalizations.of(context)!.school, 
-              style: TextStyle(
-                color: PlanColors.PrimaryTextColor, fontWeight: FontWeight.bold, 
-              ), 
-              textAlign: TextAlign.left
+            Container(
+              padding: const EdgeInsets.only(top: 16),
+              child: Text(
+                AppLocalizations.of(context)!.school, 
+                style: TextStyle(
+                  color: PlanColors.PrimaryTextColor, fontWeight: FontWeight.bold, 
+                ), 
+                textAlign: TextAlign.left
+              )
             ),
             Divider(color: PlanColors.BorderColor, height: 5),
             Container(

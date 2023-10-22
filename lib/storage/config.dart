@@ -22,6 +22,7 @@ class Config extends ChangeNotifier {
   static const configKeyAuthUser = "authUser";
   static const configKeyAuthSecret = "authSecret";
   static const configKeyAuthJwt = "authJwt";
+  static const configKeyPermTeacher = "permTeacher";
   static const configKeyFirstCall = "firstCall";
   static const configPlanTeacher = "teacher";
   static const configPlanPupil = "pupil";
@@ -45,6 +46,7 @@ class Config extends ChangeNotifier {
   String _schoolName = configDefaultSchool;
   String _notifyEndpoint = "";
   bool _notifyRegistered = false;
+  bool _teacherPermission = false;
   late IStorage _storage;
   late School _school;
 
@@ -62,6 +64,7 @@ class Config extends ChangeNotifier {
     } else {
       _storage = storage;
     }
+    _teacherPermission = false;
   }
 
   static Config getInstance() {
@@ -102,6 +105,10 @@ class Config extends ChangeNotifier {
     return _notifyRegistered;
   }
 
+  bool get teacherPermission {
+    return _teacherPermission;
+  }
+
   void setNotifyRegistered(bool registered) async {
     _notifyRegistered = registered;
     await _storage.write(key: configKeyNotifyRegistered, value: registered.toString());
@@ -125,6 +132,7 @@ class Config extends ChangeNotifier {
     _school = getSchoolObj();
     _notifyRegistered = await getNotifyRegistered();
     _notifyEndpoint = await getNotifyEndpoint();
+    _teacherPermission = await getTeacherPermission();
     log.info("Config: Loaded");
   }
 
@@ -258,6 +266,22 @@ class Config extends ChangeNotifier {
   /// Get last saved JWT
   Future<String?> getAuthJwt() {
     return _storage.read(key: configKeyAuthJwt);
+  }
+
+  Future<bool> getTeacherPermission() async {
+    if (await _storage.containsKey(key: configKeyPermTeacher)) {
+      return (await _storage.read(key: configKeyPermTeacher))! == 'true';
+    } else {
+      return false;
+    }
+  }
+
+  Future<void> setTeacherPermission(bool hasPerm) async {
+    _teacherPermission = hasPerm;
+    if (!hasPerm) {
+      this.setMode(PlanType.pupil);
+    }
+    await _storage.write(key: configKeyPermTeacher, value: hasPerm.toString());
   }
 
   /// Return true if its the first time this app is

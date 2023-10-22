@@ -85,6 +85,7 @@ class _PlanEntryUi extends State<PlanEntryUi> {
     final schoolType = schoolClassStorage.getType(schoolClass != null ? schoolClass.schoolType : 0);
     String eventTitle = "";
     String plainText = "";
+    String changeType = "";
     List<String> plainTextList = [];
 
     List<TextSpan> originalElements = [];
@@ -109,6 +110,7 @@ class _PlanEntryUi extends State<PlanEntryUi> {
         plainText = entry.teacher!.displayName;
       }
 
+      // In teachers view, supervisions / yard duties are part of the regular or standin plan.
       if (entry.isYardDuty()) {
         originalElements.add(TextSpan(text: AppLocalizations.of(context)!.supervision, style: scndTextStyle));
         if (entry.teacher != null) {
@@ -130,6 +132,7 @@ class _PlanEntryUi extends State<PlanEntryUi> {
       }
     }
 
+    // Prepare original lesson information: Subject, teacher, class, room.
     if (!entry.isYardDuty()) {
       originalElements.add(TextSpan(text: entry.subject.name, style: primTextStyle));
       if (entry.teacher != null) {
@@ -152,13 +155,26 @@ class _PlanEntryUi extends State<PlanEntryUi> {
       }
     }
     RichText original = RichText(text: TextSpan(children: originalElements));
-    
-    eventTitle = AppLocalizations.of(context)!.changeType(entry.isFree() ? AppLocalizations.of(context)!.cancelled : entry.isRegular() ? AppLocalizations.of(context)!.regular : AppLocalizations.of(context)!.standin);
+
+    // Determine the change type and give a proper foreign text.
+    if (entry.isFree()) {
+      changeType = AppLocalizations.of(context)!.cancelled;
+    } else if (entry.isRegular()) {
+      changeType = AppLocalizations.of(context)!.regular;
+    } else if (entry.isRoomChanged() && !entry.isTeacherChanged() && !entry.isSubjectChanged()) {
+      changeType = AppLocalizations.of(context)!.roomChange;
+    } else {
+      changeType = AppLocalizations.of(context)!.standin;
+    }
+
+    // Prepare title for the plain text sharing.
+    eventTitle = AppLocalizations.of(context)!.changeType(changeType);
     plainTextList.add(eventTitle);
     if (!entry.isRegular()) {
+      // There is at least one change (cancelled or substitution). A proper "title" is given.
       standin.add(Padding(
         padding: const EdgeInsets.only(top: 10, bottom: 5),
-        child: Text(entry.isFree() ? AppLocalizations.of(context)!.cancelled : entry.isRegular() ? "" : AppLocalizations.of(context)!.standin,
+        child: Text(changeType,
           style: TextStyle(
               color: PlanColors.PrimaryTextColor,
               fontWeight: FontWeight.bold
@@ -167,7 +183,9 @@ class _PlanEntryUi extends State<PlanEntryUi> {
       ));
     }
 
+    // In case there is at least one change, all changes/substitutions is shown to the pupil/teacher
     if (!entry.isFree()) {
+      // Teacher has changed.
       if (entry.chgTeacher != null) {
         plainTextList.add(AppLocalizations.of(context)!.substituteTeacher(entry.chgTeacher!.displayName));
         standin.add(ListTile(
@@ -183,6 +201,7 @@ class _PlanEntryUi extends State<PlanEntryUi> {
           )
         );
       }
+      // Room has changed.
       if (entry.chgRoom != null) {
         plainTextList.add(AppLocalizations.of(context)!.changedRoom(entry.chgRoom!));
         standin.add(ListTile(
@@ -198,6 +217,7 @@ class _PlanEntryUi extends State<PlanEntryUi> {
           )
         );
       }
+      // Subject as changed.
       if (entry.chgSubject != null) {
         plainTextList.add(AppLocalizations.of(context)!.changedSubject(entry.chgSubject!.name));
         standin.add(ListTile(
@@ -215,6 +235,7 @@ class _PlanEntryUi extends State<PlanEntryUi> {
       }
     }
 
+    // Additional information might have been given.
     if (entry.chgNotes != null) {
       plainTextList.add(AppLocalizations.of(context)!.changeNotice(entry.chgNotes!));
       additions.add(ListTile(
@@ -236,7 +257,6 @@ class _PlanEntryUi extends State<PlanEntryUi> {
     plainText = "$plainText: ${original.text.toPlainText()}";
     for (var sti in plainTextList) {
       plainText = "$plainText; $sti";
-
     }
 
     showShareActions() async {

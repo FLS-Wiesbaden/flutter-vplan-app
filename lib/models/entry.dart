@@ -72,8 +72,24 @@ class Entry implements Comparable {
     return (entryType & 2048) == 2048;
   }
 
+  bool isChange() {
+    return !this.isRegular() && !this.isFree();
+  }
+
   bool isYardDuty() {
     return (entryType & 128) == 128;
+  }
+
+  bool isRoomChanged() {
+    return this.isChange() && (entryType & 2) == 2;
+  }
+
+  bool isTeacherChanged() {
+    return this.isChange() && (entryType & 4) == 4;
+  }
+
+  bool isSubjectChanged() {
+    return this.isChange() && (entryType & 8) == 8;
   }
 
   String? get chgNotes {

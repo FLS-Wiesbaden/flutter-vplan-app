@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:de_fls_wiesbaden_vplan/ui/helper/consts.dart';
 import 'package:logging/logging.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 class AuthController extends ChangeNotifier {
 
@@ -24,6 +25,7 @@ class AuthController extends ChangeNotifier {
   Future<void> logout() async {
     final Config config = Config.getInstance();
     config.setAuthJwt(null);
+    config.setTeacherPermission(false);
     notifyListeners();
   }
 
@@ -83,7 +85,7 @@ class AuthController extends ChangeNotifier {
         'client_id': userName,
         'client_secret': secret,
         'grant_type': 'client_credentials',
-        'scope': 'vplan mobileapp',
+        'scope': 'vplan vplan-teacher mobileapp',
       },
       encoding: Encoding.getByName('utf-8'),
     ).onError((error, stackTrace) {
@@ -94,6 +96,7 @@ class AuthController extends ChangeNotifier {
       return false;
     }
     await config.setAuthJwt(response.body);
+    await this.updatePermissions();
     if (notify) {
       notifyListeners();
     }
@@ -195,12 +198,35 @@ class AuthController extends ChangeNotifier {
     if (response.statusCode != 200) {
       return false;
     }
-    config.setAuthJwt(response.body);
+    await config.setAuthJwt(response.body);
+    await this.updatePermissions();
     return true;
   }
 
   Future<bool> isLoggedIn() async {
     String? accessToken = await getAccessToken();
     return accessToken != null && accessToken.isNotEmpty;
+  }
+
+  Future<void> updatePermissions() async {
+    final log = Logger(vplanLoggerId);
+    final Config config = Config.getInstance();
+    String? accessToken = await getAccessToken();
+    if (accessToken == null || accessToken.isEmpty) {
+      log.info("No valid token - no permissions!");
+      config.setTeacherPermission(false);
+    } else {
+        Map<String, dynamic> decodedToken = JwtDecoder.decode((await this.getAccessToken())!);
+        try {
+          await config.setTeacherPermission(decodedToken['scopes'].indexOf('vplan-teacher') != -1);
+          log.info('User' + 
+            ((decodedToken['scopes'].indexOf('vplan-teacher') != -1) ? '' : ' does not') + 
+            ' has teacher permission'
+          );
+        } on Exception catch (error, stackTrace) {
+          log.warning("Could not verify token scopes. ", error, stackTrace);
+          await config.setTeacherPermission(false);
+        }
+    }
   }
 }

@@ -1,7 +1,7 @@
 name: de_fls_wiesbaden_vplan
 description: FLS Vertretungsplan App
 homepage: "https://www.fls-wiesbaden.de"
-repository: "https://git.monobear.eu/fls/flutter-test"
+repository: "https://git.monobear.eu/fls/flutter-vplan-app"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -18,7 +18,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 3.0.4+30004
+version: 3.0.5+30005
 
 environment:
   sdk: '>=2.19.4 <3.0.0'
@@ -57,6 +57,7 @@ dependencies:
   unifiedpush: ^5.0.0
   flutter_localizations:
     sdk: flutter
+  jwt_decoder: ^2.0.1
 
 dev_dependencies:
   flutter_test:
