@@ -192,6 +192,7 @@ build:ios:
       export MATCH_VERBOSE="false"
       export BUNDLE_PATH="${CI_PROJECT_DIR}/vendor/cache"
       export BUNDLE_DISABLE_SHARED_GEMS="1"
+      export MATCH_APP_IDENTIFIER=${MATCH_APP_IDENTIFIER_IOS}
       # To add split-debug: --split-debug-info=v1 to PKG_BUILD_FLAGS
       export PKG_BUILD_FLAGS="$PKG_BUILD_FLAGS --no-codesign"
       if [[ $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH ]]; then
