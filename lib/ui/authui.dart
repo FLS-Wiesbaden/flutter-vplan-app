@@ -280,7 +280,7 @@ class _AuthUi extends State<AuthUi> {
                                                                     TextEditingValue(text: object['clientSecret']);
                                                                 config.setSchool(object['school']);
                                                                 if (object['mode'] != null) {
-                                                                  config.setMode(object['mode']);
+                                                                  config.setModeString(object['mode']);
                                                                 }
                                                                 await _send();
                                                               } on SchoolNotFoundException {

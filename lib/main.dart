@@ -84,6 +84,7 @@ void main() async {
   }
 
   // Notifications handling
+  // ignore: unused_local_variable
   final NotificationAppLaunchDetails? notificationAppLaunchDetails = !kIsWeb &&
           Platform.isLinux
       ? null
