@@ -1,6 +1,6 @@
 import 'package:de_fls_wiesbaden_vplan/models/bookmarkable.dart';
 
-class SchoolClass extends Bookmarkable {
+class SchoolClass extends Bookmarkable implements Comparable<SchoolClass> {
   int schoolType;
   String name;
 
@@ -34,4 +34,13 @@ class SchoolClass extends Bookmarkable {
     'schoolType': schoolType,
     'bookmarked': bookmarked
   };
+  
+  @override
+  int compareTo(SchoolClass other) {
+    int compare = schoolType.compareTo(other.schoolType);
+    if (compare == 0) {
+      compare = name.compareTo(other.name);
+    }
+    return compare;
+  }
 }

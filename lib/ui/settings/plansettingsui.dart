@@ -150,7 +150,8 @@ class _ClassChipCollectionUi extends State<ClassChipCollectionUi> {
   @override
   Widget build(BuildContext context) {
     final schoolClassStorage = context.select((PlanStorage ps) => ps.schoolClassStorage);
-    final bookmarkedClasses = context.select((PlanStorage ps) => ps.schoolClassStorage.getBookmarkedByType());
+    final bookmarkedClasses = context.select((PlanStorage ps) => ps.schoolClassStorage.getBookmarkedByType()).toList();
+    bookmarkedClasses.sort((a, b) => a.compareTo(b));    
     if (!listenerAdded) {
       schoolClassStorage.addListener(refreshUi);
       storage = schoolClassStorage;
