@@ -1,3 +1,4 @@
+import 'package:de_fls_wiesbaden_vplan/ui/helper/consts.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:de_fls_wiesbaden_vplan/models/plan.dart';
 import 'package:de_fls_wiesbaden_vplan/storage/planstorage.dart';
@@ -10,6 +11,7 @@ import 'package:de_fls_wiesbaden_vplan/ui/vplan/planemptyui.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/vplan/planerrorui.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 
 /// Widget to show the plan itself in a specific hierarchy:
@@ -31,18 +33,38 @@ class PlanUi extends StatefulWidget {
   State<PlanUi> createState() => _PlanUiState();
 }
 
-class _PlanUiState extends State<PlanUi> with TickerProviderStateMixin {
+class _PlanUiState extends State<PlanUi> with TickerProviderStateMixin, WidgetsBindingObserver {
 
   int selectedPage = 0;
   late PlanStorage planStorage;
 
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
     super.initState();
+  }
+  
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final log = Logger(vplanLoggerId);
+    log.finer("AppLifeCycle status changed: ${state.name}");
+    if (state == AppLifecycleState.resumed) {
+       setState(() {
+        log.finer("AppLifeCycle status changed to resume. So refresh.");
+        // refresh
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final log = Logger(vplanLoggerId);
     final ValueNotifier<int> selectedPage = ValueNotifier<int>(0);
     final PageController pageController =
         PageController(viewportFraction: 0.9, initialPage: selectedPage.value);
@@ -71,6 +93,7 @@ class _PlanUiState extends State<PlanUi> with TickerProviderStateMixin {
           if (snapshot.connectionState == ConnectionState.waiting || snapshot.connectionState == ConnectionState.active) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasData && snapshot.data!.length() > 0 && !snapshot.data!.isEmpty) {
+            log.finer("Page is freshly built.");
             return RefreshIndicator(
               onRefresh: refresh,
               notificationPredicate: (ScrollNotification notification) {
