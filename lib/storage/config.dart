@@ -165,7 +165,7 @@ class Config extends ChangeNotifier {
 
   /// Update configuration and set plan type.
   void setModeString(String planType) async {
-    this.setMode(
+    setMode(
         planType == configPlanTeacher ? PlanType.teacher : PlanType.pupil);
   }
 

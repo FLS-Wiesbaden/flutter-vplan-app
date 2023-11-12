@@ -71,7 +71,9 @@ class _GeneralSettingsUi extends State<GeneralSettingsUi> {
           children: [
             Tooltip(
                 message: AppLocalizations.of(context)!.helpSettingMode,
-                child: Row(children: [
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
                   Text(AppLocalizations.of(context)!.planModeForm, style: TextStyle(color: PlanColors.PrimaryTextColor, fontWeight: FontWeight.bold),),
                   Text(AppLocalizations.of(context)!.pupil),
                   Switch(
@@ -88,12 +90,13 @@ class _GeneralSettingsUi extends State<GeneralSettingsUi> {
                   ),
                   Text(AppLocalizations.of(context)!.teacher),
                 ],
-                mainAxisSize: MainAxisSize.min
               ),
             ),
             Tooltip(
                 message: AppLocalizations.of(context)!.helpSettingRegular,
-                child: Row(children: [
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
                   Text(AppLocalizations.of(context)!.regularPlan, style: TextStyle(color: PlanColors.PrimaryTextColor, fontWeight: FontWeight.bold),),
                   Switch(
                     // This bool value toggles the switch.
@@ -107,15 +110,15 @@ class _GeneralSettingsUi extends State<GeneralSettingsUi> {
                     }
                   )
                 ],
-                mainAxisSize: MainAxisSize.min
               ),
             ),
+            /* Disabled, as its confusing people.
             Row(children: [
               Text(AppLocalizations.of(context)!.pushNotification, style: TextStyle(color: PlanColors.PrimaryTextColor, fontWeight: FontWeight.bold),),
               Text(
                 config.notifyRegistered ? AppLocalizations.of(context)!.enabled : AppLocalizations.of(context)!.disabled, 
                 style: TextStyle(color: PlanColors.SecondaryTextColor),),
-            ]),
+            ]),*/
             Container(
               padding: const EdgeInsets.only(top: 16),
               child: Text(
