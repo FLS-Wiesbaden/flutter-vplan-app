@@ -163,7 +163,15 @@ class SchoolClassStorage extends ChangeNotifier {
   }
 
   Iterable<SchoolClass> getBookmarkedByType() {
-    return _list.values.where((element) => getType(element.schoolType).bookmarked);
+    return _list.values.where((element) {
+      try {
+        return getType(element.schoolType).bookmarked;
+      } on SchoolTypeNotFoundException {
+        final log = Logger(vplanLoggerId);
+        log.warning("School type ${element.schoolType} not found for ${element.name}!");
+        return false;
+      }
+    });
   }
 
   Iterable<Lesson> getBookmarkedLessonsByClass() {

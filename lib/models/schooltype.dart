@@ -16,6 +16,7 @@ class SchoolType extends Bookmarkable {
       case 3: return const Color(0xFFFE9674);
       case 4: return const Color(0xFF29B6C7);
       case 5: return const Color(0xFF1CECD6);
+      case 6: return const Color.fromARGB(255, 191, 46, 148);
     }
     return const Color.fromARGB(255, 134, 133, 133);
   }
@@ -27,6 +28,9 @@ class SchoolType extends Bookmarkable {
       case 3: return const LinearGradient(colors: [Color(0xFFFE9674), Color(0xFFFE395E)]);
       case 4: return const LinearGradient(colors: [Color(0xFF45E3F6), Color(0xFF1E8BF9)]);
       case 5: return const LinearGradient(colors: [Color(0xFF1CECD6), Color(0xFF09D778)]);
+      case 6: return const LinearGradient(colors: [
+        Color.fromARGB(255, 191, 46, 148), Color.fromARGB(255, 182, 5, 129)]
+      );
     }
 
     return const LinearGradient(colors: [Color(0xFFEFEFEF), Color(0xFFCFCFCF)]);
