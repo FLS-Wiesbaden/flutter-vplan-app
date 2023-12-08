@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:de_fls_wiesbaden_vplan/ui/helper/consts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
