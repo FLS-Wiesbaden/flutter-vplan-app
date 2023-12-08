@@ -67,7 +67,7 @@ class _AuthUi extends State<AuthUi> {
         body: FutureBuilder(
             future: _authController.isLoggedIn().then((value) {
               log.finer(
-                  "Got a value whether we're logged in: ${value.toString()}");
+                  "[authui] Got a value whether we're logged in: ${value.toString()}");
               if (value) {
                 Navigator.pushReplacement(
                   context,
@@ -348,20 +348,21 @@ class _AuthUi extends State<AuthUi> {
   Future<bool> _login() async {
     final log = Logger(vplanLoggerId);
     bool before = isLoggedIn.value;
+    final appLocalizer = AppLocalizations.of(context)!;
 
     // login call happens here ↓
     errorMessage = null;
     bool loginOK = await _authController
         .login()
         .timeout(const Duration(seconds: 2), onTimeout: () {
-      errorMessage = AppLocalizations.of(context)!.loginNotPossibleInternet;
+      errorMessage = appLocalizer.loginNotPossibleInternet;
       return false;
     });
     log.finest(
         "Login triggered and got result: ${loginOK ? "Perfect!" : "Failed!"}");
 
     if (!loginOK && errorMessage == null) {
-      errorMessage = AppLocalizations.of(context)!.loginNotPossibleCredentials;
+      errorMessage = appLocalizer.loginNotPossibleCredentials;
     }
     bool after = await _authController.isLoggedIn();
     if (before != after) {

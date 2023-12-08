@@ -256,8 +256,8 @@ build:ios:
     - |
       echo "Reset default keychain"
       security default-keychain -d user -s "login.keychain"
-      echo "Delete keychain again"
-      security delete-keychain "$MATCH_KEYCHAIN_NAME"
+      #echo "Delete keychain again"
+      #security delete-keychain "$MATCH_KEYCHAIN_NAME"
       echo "Delete downloaded mobile provision profiles"
       rm -Rf "$HOME/Library/MobileDevice/Provisioning Profiles/*.mobileprovision"
   tags:

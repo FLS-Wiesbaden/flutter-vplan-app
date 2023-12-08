@@ -51,7 +51,7 @@ class _PlanSettingsUi extends State<PlanSettingsUi> {
         child: Text(AppLocalizations.of(context)!.general, style: TextStyle(color: PlanColors.PrimaryTextColor, fontWeight: FontWeight.bold, fontSize: 16))
       ),
       Divider(color: PlanColors.BorderColor, height: 5),
-      const GeneralSettingsUi()
+      GeneralSettingsUi(isWizard: widget.isWizard)
     ];
 
     return Padding(

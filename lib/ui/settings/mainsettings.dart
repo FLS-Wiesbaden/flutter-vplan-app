@@ -14,8 +14,9 @@ import 'package:provider/provider.dart';
 /// E.g. plan mode
 /// and offers possibility to log out.
 class GeneralSettingsUi extends StatefulWidget {
+  final bool isWizard;
 
-  const GeneralSettingsUi({super.key});
+  const GeneralSettingsUi({super.key, this.isWizard = false});
   
   @override
   State<StatefulWidget> createState() => _GeneralSettingsUi();
@@ -55,7 +56,7 @@ class _GeneralSettingsUi extends State<GeneralSettingsUi> {
   
     return FutureBuilder(
       future: _authController.isLoggedIn().then((value) {
-        log.finer("Got a value whether we're logged in: ${value.toString()}");
+        log.finer("[mainsettings] Got a value whether we're logged in: ${value.toString()}");
         if (!value) {
           Navigator.pushReplacement(
             context,
@@ -166,6 +167,7 @@ class _GeneralSettingsUi extends State<GeneralSettingsUi> {
                 onPressed: () {
                   setState(() {
                     AuthController.getInstance().logout();
+                    Config.getInstance().setFirstCallDone(false);
                     Navigator.of(context).pop();
                   });
                 },

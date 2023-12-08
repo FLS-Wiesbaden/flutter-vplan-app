@@ -190,7 +190,7 @@ class Config extends ChangeNotifier {
     if (await _storage.containsKey(key: configKeyAddRegularPlan)) {
       return (await _storage.read(key: configKeyAddRegularPlan))! == 'true';
     } else {
-      return false;
+      return true;
     }
   }
 

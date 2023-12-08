@@ -156,10 +156,15 @@ class _FlsVplanAppState extends State<FlsVplanApp> {
     @override
   void initState() {
     super.initState();
+    final log = getVPlanLogger();
     BackgroundPush.initialize();
 
     _isAndroidPermissionGranted();
-    _requestPermissions();
+    try {
+      _requestPermissions();
+    } catch(e) {
+      log.severe("Got exception on requesting permission: ${e.toString()}");
+    }
   }
 
   Future<void> _isAndroidPermissionGranted() async {
@@ -210,7 +215,7 @@ class _FlsVplanAppState extends State<FlsVplanApp> {
           flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>();
 
-      granted = await androidImplementation?.requestPermission();
+      granted = await androidImplementation?.requestNotificationsPermission();      
     } else {
       log.info("Notifications disabled as not supported.");
     }
