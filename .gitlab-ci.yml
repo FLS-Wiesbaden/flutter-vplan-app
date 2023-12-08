@@ -105,8 +105,10 @@ build:android:
         export PKG_BUILD_FLAGS="$PKG_BUILD_FLAGS --release"
         export PKG_RELEASE_TYPE="release"
       else 
-        export PKG_BUILD_FLAGS="$PKG_BUILD_FLAGS --debug"
-        export PKG_RELEASE_TYPE="debug"
+        #export PKG_BUILD_FLAGS="$PKG_BUILD_FLAGS --debug"
+        #export PKG_RELEASE_TYPE="debug"
+        export PKG_BUILD_FLAGS="$PKG_BUILD_FLAGS --release"
+        export PKG_RELEASE_TYPE="release"
       fi
       export PKG_VERSION="`grep 'version: ' pubspec.yaml | sed -E 's/version: (.+)\+([0-9]+)/\1_\2/'`"
       export SEC_FILES="$CI_PROJECT_DIR/private_keys"
