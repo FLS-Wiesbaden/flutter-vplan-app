@@ -31,9 +31,11 @@ class TeacherStorage extends ChangeNotifier {
   }
 
   void disableBookmarks() {
+    final log = Logger(vplanLoggerId);
+    log.fine("Clear teacher bookmarks.");
     for(var item in _list) {
       if (item.isBookmarked()) {
-        item.setBookmarked(false);
+        item.setBookmarked(false, skipNotification: true);
       }
     }
   }

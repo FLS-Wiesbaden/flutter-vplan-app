@@ -299,17 +299,21 @@ class Config extends ChangeNotifier {
   }
 
   Future<bool> getTeacherPermission() async {
-    if (await _storage.containsKey(key: configKeyPermTeacher)) {
-      return (await _storage.read(key: configKeyPermTeacher))! == 'true';
-    } else {
-      return false;
+    try {
+      if (await _storage.containsKey(key: configKeyPermTeacher)) {
+        return (await _storage.read(key: configKeyPermTeacher))! == 'true';
+      }
+    } catch (e) {
+      final log = Logger(vplanLoggerId);
+      log.severe("Config: Failed loading teacher permission -- fallback to false!");
     }
+    return false;
   }
 
   Future<void> setTeacherPermission(bool hasPerm) async {
     _teacherPermission = hasPerm;
     if (!hasPerm) {
-      this.setMode(PlanType.pupil);
+      setMode(PlanType.pupil);
     }
     await _storage.write(key: configKeyPermTeacher, value: hasPerm.toString());
   }

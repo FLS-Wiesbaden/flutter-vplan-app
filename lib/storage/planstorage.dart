@@ -15,6 +15,7 @@ import 'package:de_fls_wiesbaden_vplan/storage/schoolclassstorage.dart';
 import 'package:de_fls_wiesbaden_vplan/storage/teacherstorage.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/helper/consts.dart';
 import 'package:logging/logging.dart';
+
 int notificationId = 0;
 
 class PlanStorage extends ChangeNotifier {
@@ -25,7 +26,8 @@ class PlanStorage extends ChangeNotifier {
   String? _etag;
   static const collectionName = "plan";
   final LocalStorage storage = LocalStorage(collectionName);
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   var _loading = false;
   Future<void>? _depRefresh;
 
@@ -45,22 +47,26 @@ class PlanStorage extends ChangeNotifier {
 
   void _depDataChanged() {
     final log = Logger(vplanLoggerId);
-    log.fine("Some dependencies changed. Re-schedule personal plan reload (${_depRefresh != null ? "Already set" : "Not set"}).");
+    log.fine(
+        "Some dependencies changed. Re-schedule personal plan reload (${_depRefresh != null ? "Already set" : "Not set"}).");
     _depRefresh ??= Future.delayed(const Duration(milliseconds: 500), () {
-        final log = Logger(vplanLoggerId);
-        log.fine("Future for _depDataChanged started.");
-        if (_plan != null) {
-          _personalPlan = Plan.copyFilter(
-            _plan!, bookmarked: _scs.getBookmarked(), bookmarkedLessons: _scs.getBookmarkedLessonsHash(), bookmarkedTeachers: _tcs.getBookmarked()
-          );
-          log.info("Personal plan re-generated.");
-          notifyListeners();
-        }
-      }).whenComplete(() => _depRefresh = null);
+      final log = Logger(vplanLoggerId);
+      log.fine("Future for _depDataChanged started.");
+      if (_plan != null) {
+        _personalPlan = Plan.copyFilter(_plan!,
+            bookmarked: _scs.getBookmarked(),
+            bookmarkedLessons: _scs.getBookmarkedLessonsHash(),
+            bookmarkedTeachers: _tcs.getBookmarked());
+        log.info("Personal plan re-generated.");
+        notifyListeners();
+      }
+    }).whenComplete(() => _depRefresh = null);
   }
 
   void handlePlanModeChange() {
     if (Config.getInstance().mode != planType) {
+      final log = Logger(vplanLoggerId);
+      log.fine("handlePlanModeChange: Plan mode changed old: $planType, new: ${Config.getInstance().mode}.");
       planType = Config.getInstance().mode;
       // check what we need to disable.
       if (planType == PlanType.pupil) {
@@ -68,6 +74,7 @@ class PlanStorage extends ChangeNotifier {
       } else {
         _scs.disableBookmarks();
       }
+      notifyListeners();
     }
   }
 
@@ -91,7 +98,8 @@ class PlanStorage extends ChangeNotifier {
     if (numberEntries > 1) {
       body = "Es liegen $numberEntries neue Vertretungsplaneinträge vor.";
     } else if (numberEntries > 0) {
-      body = "Es gibt einen neuen Vertretungsplaneintrag für den ${newEntries.first.getShortDateString()}.";
+      body =
+          "Es gibt einen neuen Vertretungsplaneintrag für den ${newEntries.first.getShortDateString()}.";
     } else if (newLessons > 0) {
       body = "Es sind neue Klassen/Kurse verfügbar!";
     } else {
@@ -100,26 +108,26 @@ class PlanStorage extends ChangeNotifier {
 
     AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
-          vplanNewEntriesChannelId, 
-          vplanNewEntriesChannelName,
-          channelDescription: vplanNewEntriesChannelDescription,
-          importance: Importance.defaultImportance,
-          priority: Priority.defaultPriority,
-          ticker: 'ticker',
-          number: numberEntries
-        );
+            vplanNewEntriesChannelId, vplanNewEntriesChannelName,
+            channelDescription: vplanNewEntriesChannelDescription,
+            importance: Importance.defaultImportance,
+            priority: Priority.defaultPriority,
+            ticker: 'ticker',
+            number: numberEntries);
     NotificationDetails notificationDetails =
         NotificationDetails(android: androidNotificationDetails);
-    await flutterLocalNotificationsPlugin.show(
-        notificationId++, 'Neue Vertretungsplaneinträge', body, notificationDetails);
+    await flutterLocalNotificationsPlugin.show(notificationId++,
+        'Neue Vertretungsplaneinträge', body, notificationDetails);
   }
 
   void setPlan(
-      {required Plan plan, required DateTime fetched, bool savePlan = false, bool wasRefresh = false}) {
-
+      {required Plan plan,
+      required DateTime fetched,
+      bool savePlan = false,
+      bool wasRefresh = false}) {
     final log = Logger(vplanLoggerId);
     int newLessons = 0;
-    
+
     // is it required to update the lessons?
     if (savePlan) {
       for (var elem in plan.getEntries()) {
@@ -140,7 +148,10 @@ class PlanStorage extends ChangeNotifier {
     Plan prevPersonalPlan = _personalPlan ?? Plan(list: [], lastUpdate: null);
     _plan = plan;
     _standinPlan = Plan.copyFilter(plan, onlyStandin: true);
-    _personalPlan = Plan.copyFilter(plan, bookmarked: _scs.getBookmarked(), bookmarkedLessons: _scs.getBookmarkedLessonsHash(), bookmarkedTeachers: _tcs.getBookmarked());
+    _personalPlan = Plan.copyFilter(plan,
+        bookmarked: _scs.getBookmarked(),
+        bookmarkedLessons: _scs.getBookmarkedLessonsHash(),
+        bookmarkedTeachers: _tcs.getBookmarked());
     _fetched = fetched;
     _loading = false;
     notifyListeners();
@@ -165,8 +176,11 @@ class PlanStorage extends ChangeNotifier {
   SchoolClassStorage get schoolClassStorage => _scs;
   TeacherStorage get teacherStorage => _tcs;
 
-  Map<String, dynamic> toJson() =>
-      {'plan': _plan?.toJson(), 'fetched': _fetched?.toIso8601String(), 'etag': _etag};
+  Map<String, dynamic> toJson() => {
+        'plan': _plan?.toJson(),
+        'fetched': _fetched?.toIso8601String(),
+        'etag': _etag
+      };
 
   void save() {
     final log = Logger(vplanLoggerId);
@@ -196,7 +210,7 @@ class PlanStorage extends ChangeNotifier {
     final bool storageReady = await storage.ready;
     log.fine("Plan::load: Storage is ${storageReady ? "ready" : "not ready"}.");
     final Map<String, dynamic>? storageData = storage.getItem("data");
-    
+
     if (!refresh && _plan != null) {
       log.info("Plan::load: Load plan from cache.");
       return getPlan(personalPlan: personalPlan)!;
@@ -209,7 +223,11 @@ class PlanStorage extends ChangeNotifier {
     } else {
       return downloadPlan().then<Plan>((value) {
         if (value != null) {
-          setPlan(fetched: DateTime.now(), plan: value, savePlan: true, wasRefresh: refresh);
+          setPlan(
+              fetched: DateTime.now(),
+              plan: value,
+              savePlan: true,
+              wasRefresh: refresh);
         }
         log.info("Plan::load: Just downloaded plan and use that.");
         return getPlan(personalPlan: personalPlan)!;
@@ -217,7 +235,6 @@ class PlanStorage extends ChangeNotifier {
         log.severe("Download and parsing of plan failed", error, stackTrace);
         return Future.error(error!, stackTrace);
       });
-      
     }
   }
 
@@ -230,8 +247,10 @@ class PlanStorage extends ChangeNotifier {
       'regular': Config.getInstance().addRegularPlan ? '1' : '0',
       'filterElapsedHours': '0',
       'days': Config.getInstance().numberDays.toString(),
-      'planMode': Config.getInstance().mode == PlanType.teacher ? 'teacher' : 'pupil',
-      'view': Config.getInstance().mode == PlanType.teacher ? 'teacher' : 'pupil'
+      'planMode':
+          Config.getInstance().mode == PlanType.teacher ? 'teacher' : 'pupil',
+      'view':
+          Config.getInstance().mode == PlanType.teacher ? 'teacher' : 'pupil'
     };
     if (Config.getInstance().notifyRegistered) {
       queryParameters['up'] = Config.getInstance().notifyEndpoint;
@@ -242,33 +261,38 @@ class PlanStorage extends ChangeNotifier {
     }
     if (_fetched != null) {
       final DateFormat formatter = DateFormat('EEE, dd LLL y H:m:s');
-      headers[HttpHeaders.ifModifiedSinceHeader] = "${formatter.format(_fetched!.toUtc())} GMT";
+      headers[HttpHeaders.ifModifiedSinceHeader] =
+          "${formatter.format(_fetched!.toUtc())} GMT";
     }
-    final response = await defaultApiRequest(
-      "/vplan/loadPlan", 
-      headers: headers,
-      queryParameters: queryParameters
-    ).onError((error, stackTrace) {
+    final response = await defaultApiRequest("/vplan/loadPlan",
+            headers: headers, queryParameters: queryParameters)
+        .onError((error, stackTrace) {
       return Future.error(error!, stackTrace);
     });
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
-      var rawPlan = jsonDecode(await response.stream.bytesToString()) as Map<String, dynamic>;
+      var rawPlan = jsonDecode(await response.stream.bytesToString())
+          as Map<String, dynamic>;
       developer.log("VPlan downloaded -- status: ${response.statusCode}");
       // We should set the etag.
-      String? etag = response.headers.containsKey(HttpHeaders.etagHeader) ? response.headers[HttpHeaders.etagHeader] : null;
+      String? etag = response.headers.containsKey(HttpHeaders.etagHeader)
+          ? response.headers[HttpHeaders.etagHeader]
+          : null;
       if (etag != null) {
         _etag = etag;
       }
-      log.info("Downloaded vplan -- status: ${response.statusCode}, etag: ${etag ?? "-"}");
+      log.info(
+          "Downloaded vplan -- status: ${response.statusCode}, etag: ${etag ?? "-"}");
       return Plan.fromJsonUpstream(rawPlan);
     } else if (response.statusCode == 304 && _plan != null) {
-      log.info("Downloaded vplan - no data changed! -- status: ${response.statusCode}");
+      log.info(
+          "Downloaded vplan - no data changed! -- status: ${response.statusCode}");
       return null;
     } else if (response.statusCode == 204 || response.statusCode == 304) {
-      log.info("Downloaded vplan - no data changed or returned! -- status: ${response.statusCode}");
+      log.info(
+          "Downloaded vplan - no data changed or returned! -- status: ${response.statusCode}");
       return Plan(list: [], lastUpdate: DateTime.now());
     } else {
       log.warning("Vplan download failed -- status: ${response.statusCode}");

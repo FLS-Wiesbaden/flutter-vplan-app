@@ -136,9 +136,9 @@ class FlsVplanApp extends StatefulWidget {
   const FlsVplanApp(
     //this.notificationAppLaunchDetails, 
     {
-    Key? key,
+    super.key,
     }
-  ) : super(key: key);  
+  );  
 
   //final NotificationAppLaunchDetails? notificationAppLaunchDetails;
 

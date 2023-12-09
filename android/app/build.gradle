@@ -63,7 +63,6 @@ android {
         targetSdkVersion 34
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
-        abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86_64'
     }
 
     signingConfigs {
@@ -86,10 +85,16 @@ android {
                 signingConfig signingConfigs.debug
             }
             matchingFallbacks = ['release']
+            ndk {
+                abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86_64'
+            }
         }
         debug {
             matchingFallbacks = ['debug']
             signingConfig signingConfigs.debug
+            ndk {
+                abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86_64'
+            }
         }
     }
 }
