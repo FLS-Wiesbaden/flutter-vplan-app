@@ -73,7 +73,7 @@ class Entry implements Comparable {
   }
 
   bool isChange() {
-    return !this.isRegular() && !this.isFree();
+    return !isRegular() && !isFree();
   }
 
   bool isYardDuty() {
@@ -81,15 +81,15 @@ class Entry implements Comparable {
   }
 
   bool isRoomChanged() {
-    return this.isChange() && (entryType & 2) == 2;
+    return isChange() && (entryType & 2) == 2;
   }
 
   bool isTeacherChanged() {
-    return this.isChange() && (entryType & 4) == 4;
+    return isChange() && (entryType & 4) == 4;
   }
 
   bool isSubjectChanged() {
-    return this.isChange() && (entryType & 8) == 8;
+    return isChange() && (entryType & 8) == 8;
   }
 
   String? get chgNotes {

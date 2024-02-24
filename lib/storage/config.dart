@@ -154,9 +154,9 @@ class Config extends ChangeNotifier {
   }
 
   /// Update configuration and set plan type.
-  void setMode(PlanType pt) async {
+  Future<void> setMode(PlanType pt) async {
     _planType = pt;
-    await _storage
+    return _storage
         .write(
             key: configKeyMode,
             value: pt == PlanType.teacher ? configPlanTeacher : configPlanPupil)
@@ -164,7 +164,7 @@ class Config extends ChangeNotifier {
   }
 
   /// Update configuration and set plan type.
-  void setModeString(String planType) async {
+  Future<void> setModeString(String planType) async {
     setMode(
         planType == configPlanTeacher ? PlanType.teacher : PlanType.pupil);
   }
@@ -190,7 +190,7 @@ class Config extends ChangeNotifier {
     if (await _storage.containsKey(key: configKeyAddRegularPlan)) {
       return (await _storage.read(key: configKeyAddRegularPlan))! == 'true';
     } else {
-      return false;
+      return true;
     }
   }
 
@@ -233,7 +233,7 @@ class Config extends ChangeNotifier {
   }
 
   /// Set school identifier.
-  void setSchool(String school) async {
+  Future<void> setSchool(String school) async {
     // Throws an exception, if school cannot be found.
     if (Config.schools.indexWhere((element) => element.id == school) < 0) {
       throw SchoolNotFoundException("School $school not found!");
@@ -242,7 +242,7 @@ class Config extends ChangeNotifier {
       BackgroundPush.unregister(_school.notifyInstance);
     }
     _schoolName = school;
-    await _storage
+    return _storage
         .write(key: configKeySchool, value: school)
         .whenComplete(() => notifyListeners());
   }
@@ -299,17 +299,21 @@ class Config extends ChangeNotifier {
   }
 
   Future<bool> getTeacherPermission() async {
-    if (await _storage.containsKey(key: configKeyPermTeacher)) {
-      return (await _storage.read(key: configKeyPermTeacher))! == 'true';
-    } else {
-      return false;
+    try {
+      if (await _storage.containsKey(key: configKeyPermTeacher)) {
+        return (await _storage.read(key: configKeyPermTeacher))! == 'true';
+      }
+    } catch (e) {
+      final log = Logger(vplanLoggerId);
+      log.severe("Config: Failed loading teacher permission -- fallback to false!");
     }
+    return false;
   }
 
   Future<void> setTeacherPermission(bool hasPerm) async {
     _teacherPermission = hasPerm;
     if (!hasPerm) {
-      this.setMode(PlanType.pupil);
+      setMode(PlanType.pupil);
     }
     await _storage.write(key: configKeyPermTeacher, value: hasPerm.toString());
   }

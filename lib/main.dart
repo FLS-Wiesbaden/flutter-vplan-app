@@ -1,8 +1,8 @@
 import 'dart:io';
 
+import 'package:de_fls_wiesbaden_vplan/routes/routes.dart';
 import 'package:de_fls_wiesbaden_vplan/storage/config.dart';
 import 'package:de_fls_wiesbaden_vplan/storage/planstorage.dart';
-import 'package:de_fls_wiesbaden_vplan/ui/authui.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/helper/consts.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/styles/plancolors.dart';
 import 'package:de_fls_wiesbaden_vplan/utils/logger.dart';
@@ -136,9 +136,9 @@ class FlsVplanApp extends StatefulWidget {
   const FlsVplanApp(
     //this.notificationAppLaunchDetails, 
     {
-    Key? key,
+    super.key,
     }
-  ) : super(key: key);  
+  );
 
   //final NotificationAppLaunchDetails? notificationAppLaunchDetails;
 
@@ -151,15 +151,22 @@ class FlsVplanApp extends StatefulWidget {
 
 class _FlsVplanAppState extends State<FlsVplanApp> {
 
+  final _appRouter = AppRouter();
+
   bool _notificationsEnabled = false;
 
     @override
   void initState() {
     super.initState();
+    final log = getVPlanLogger();
     BackgroundPush.initialize();
 
     _isAndroidPermissionGranted();
-    _requestPermissions();
+    try {
+      _requestPermissions();
+    } catch(e) {
+      log.severe("Got exception on requesting permission: ${e.toString()}");
+    }
   }
 
   Future<void> _isAndroidPermissionGranted() async {
@@ -210,7 +217,7 @@ class _FlsVplanAppState extends State<FlsVplanApp> {
           flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>();
 
-      granted = await androidImplementation?.requestPermission();
+      granted = await androidImplementation?.requestNotificationsPermission();      
     } else {
       log.info("Notifications disabled as not supported.");
     }
@@ -230,7 +237,7 @@ class _FlsVplanAppState extends State<FlsVplanApp> {
     final log = getVPlanLogger();
     log.finest("Building FlsVplanApp");
 
-    return MaterialApp(
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
@@ -238,7 +245,7 @@ class _FlsVplanAppState extends State<FlsVplanApp> {
       theme: ThemeData(
         primarySwatch: PlanColors.MatPrimaryTextColor,
       ),
-      home: const AuthUi(),
+      routerConfig: _appRouter.config()
     );
   }
 }
