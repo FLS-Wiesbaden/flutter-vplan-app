@@ -1,4 +1,6 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:de_fls_wiesbaden_vplan/controllers/authcontroller.dart';
+import 'package:de_fls_wiesbaden_vplan/routes/routes.gr.dart';
 import 'package:de_fls_wiesbaden_vplan/storage/config.dart';
 import 'package:de_fls_wiesbaden_vplan/storage/planstorage.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/settings/plansettingsui.dart';
@@ -7,6 +9,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+@RoutePage()
 class Wizard extends StatefulWidget {
   const Wizard({super.key});
 
@@ -45,15 +48,18 @@ class _Wizard extends State<Wizard> {
                       ],
                       currentIndex: 1,
                       onTap: (value) async {
-                        final navigator =
-                            Navigator.of(context); // store the Navigator
                         if (value == 0) {
                           await AuthController.getInstance().logout();
+                          if (context.mounted) {
+                            context.navigateTo(AuthUiRoute());
+                          }
                         } else {
                           await Config.getInstance().setFirstCallDone(true);
                           await ps.refresh();
+                          if (context.mounted) {
+                            context.navigateTo(const FlsVplanMainUiRoute());
+                          }
                         }
-                        navigator.pop();
                       },
                     )));
           }

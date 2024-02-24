@@ -154,9 +154,9 @@ class Config extends ChangeNotifier {
   }
 
   /// Update configuration and set plan type.
-  void setMode(PlanType pt) async {
+  Future<void> setMode(PlanType pt) async {
     _planType = pt;
-    await _storage
+    return _storage
         .write(
             key: configKeyMode,
             value: pt == PlanType.teacher ? configPlanTeacher : configPlanPupil)
@@ -164,7 +164,7 @@ class Config extends ChangeNotifier {
   }
 
   /// Update configuration and set plan type.
-  void setModeString(String planType) async {
+  Future<void> setModeString(String planType) async {
     setMode(
         planType == configPlanTeacher ? PlanType.teacher : PlanType.pupil);
   }
@@ -233,7 +233,7 @@ class Config extends ChangeNotifier {
   }
 
   /// Set school identifier.
-  void setSchool(String school) async {
+  Future<void> setSchool(String school) async {
     // Throws an exception, if school cannot be found.
     if (Config.schools.indexWhere((element) => element.id == school) < 0) {
       throw SchoolNotFoundException("School $school not found!");
@@ -242,7 +242,7 @@ class Config extends ChangeNotifier {
       BackgroundPush.unregister(_school.notifyInstance);
     }
     _schoolName = school;
-    await _storage
+    return _storage
         .write(key: configKeySchool, value: school)
         .whenComplete(() => notifyListeners());
   }

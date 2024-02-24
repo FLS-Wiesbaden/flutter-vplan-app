@@ -1,30 +1,36 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:de_fls_wiesbaden_vplan/controllers/authcontroller.dart';
 import 'package:de_fls_wiesbaden_vplan/storage/planstorage.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/helper/consts.dart';
 import 'package:de_fls_wiesbaden_vplan/storage/config.dart';
 import 'package:de_fls_wiesbaden_vplan/utils/logger.dart';
+import 'package:flutter/foundation.dart';
 import 'package:unifiedpush/unifiedpush.dart';
 
 class BackgroundPush {
 
   static void initialize() {
     final log = getVPlanLogger();
-    log.info("BackgroundPush is initializing...");
-
-    UnifiedPush.initialize(
-      onNewEndpoint:
-          onNewEndpoint, // takes (String endpoint, String instance) in args
-      onRegistrationFailed: onRegistrationFailed, // takes (String instance)
-      onUnregistered: onUnregistered, // takes (String instance)
-      onMessage: pushNotifyReceived, // takes (String message, String instance) in args
-    );
+    if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+      log.info("BackgroundPush is initializing...");
+      UnifiedPush.initialize(
+        onNewEndpoint:
+            onNewEndpoint, // takes (String endpoint, String instance) in args
+        onRegistrationFailed: onRegistrationFailed, // takes (String instance)
+        onUnregistered: onUnregistered, // takes (String instance)
+        onMessage: pushNotifyReceived, // takes (String message, String instance) in args
+      );
+    } else {
+      log.info("BackgroundPush disabled as its not supported on this platform...");
+    }
   }
 
   static Future<void> setupPush() async {
     final log = getVPlanLogger();
+    if (kIsWeb || (!Platform.isAndroid && !Platform.isIOS)) {
+      return;
+    }
     log.fine("Setup background push");
     if (!await AuthController.getInstance().isLoggedIn()) {
       return;

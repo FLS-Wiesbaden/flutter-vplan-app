@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/styles/plancolors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/gestures.dart';
@@ -10,6 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 /// containing information about the app,
 /// publisher, producer, developers,
 /// and licenses.
+@RoutePage()
 class AboutUi extends StatelessWidget {
   const AboutUi({super.key});
 

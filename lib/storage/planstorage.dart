@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:de_fls_wiesbaden_vplan/ui/helper/apirequest.dart';
@@ -29,7 +30,7 @@ class PlanStorage extends ChangeNotifier {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
   var _loading = false;
-  Future<void>? _depRefresh;
+  Timer? _depRefresh;
 
   Plan? get plan => _plan;
   final SchoolClassStorage _scs = SchoolClassStorage();
@@ -47,9 +48,11 @@ class PlanStorage extends ChangeNotifier {
 
   void _depDataChanged() {
     final log = Logger(vplanLoggerId);
+    bool alreadyActive = _depRefresh?.isActive ?? false;
     log.fine(
-        "Some dependencies changed. Re-schedule personal plan reload (${_depRefresh != null ? "Already set" : "Not set"}).");
-    _depRefresh ??= Future.delayed(const Duration(milliseconds: 500), () {
+        "Some dependencies changed. Re-schedule personal plan reload (${alreadyActive ? "Already set" : "Not set"}).");
+    _depRefresh?.cancel();
+    _depRefresh = Timer(const Duration(seconds: 2), () {
       final log = Logger(vplanLoggerId);
       log.fine("Future for _depDataChanged started.");
       if (_plan != null) {
@@ -60,7 +63,8 @@ class PlanStorage extends ChangeNotifier {
         log.info("Personal plan re-generated.");
         notifyListeners();
       }
-    }).whenComplete(() => _depRefresh = null);
+      _depRefresh = null;
+    });
   }
 
   void handlePlanModeChange() {

@@ -1,8 +1,8 @@
 import 'dart:io';
 
+import 'package:de_fls_wiesbaden_vplan/routes/routes.dart';
 import 'package:de_fls_wiesbaden_vplan/storage/config.dart';
 import 'package:de_fls_wiesbaden_vplan/storage/planstorage.dart';
-import 'package:de_fls_wiesbaden_vplan/ui/authui.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/helper/consts.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/styles/plancolors.dart';
 import 'package:de_fls_wiesbaden_vplan/utils/logger.dart';
@@ -138,7 +138,7 @@ class FlsVplanApp extends StatefulWidget {
     {
     super.key,
     }
-  );  
+  );
 
   //final NotificationAppLaunchDetails? notificationAppLaunchDetails;
 
@@ -150,6 +150,8 @@ class FlsVplanApp extends StatefulWidget {
 }
 
 class _FlsVplanAppState extends State<FlsVplanApp> {
+
+  final _appRouter = AppRouter();
 
   bool _notificationsEnabled = false;
 
@@ -235,7 +237,7 @@ class _FlsVplanAppState extends State<FlsVplanApp> {
     final log = getVPlanLogger();
     log.finest("Building FlsVplanApp");
 
-    return MaterialApp(
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
@@ -243,7 +245,7 @@ class _FlsVplanAppState extends State<FlsVplanApp> {
       theme: ThemeData(
         primarySwatch: PlanColors.MatPrimaryTextColor,
       ),
-      home: const AuthUi(),
+      routerConfig: _appRouter.config()
     );
   }
 }
