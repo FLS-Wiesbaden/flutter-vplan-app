@@ -1,13 +1,8 @@
-import 'dart:convert';
 import 'package:auto_route/auto_route.dart';
 import 'package:de_fls_wiesbaden_vplan/controllers/authcontroller.dart';
 import 'package:de_fls_wiesbaden_vplan/routes/routes.gr.dart';
 import 'package:de_fls_wiesbaden_vplan/storage/config.dart';
-import 'package:de_fls_wiesbaden_vplan/ui/aboutui.dart';
-import 'package:de_fls_wiesbaden_vplan/ui/authscanui.dart';
-import 'package:de_fls_wiesbaden_vplan/ui/flsvplanmainui.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/helper/consts.dart';
-import 'package:de_fls_wiesbaden_vplan/ui/helper/exceptions.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/styles/plancolors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
