@@ -6,7 +6,7 @@ variables:
   #    - "13.2"
   #    - "13.2.1"
   #    - "14.0.1"
-  flutterVersion: "3.13.6"
+  flutterVersion: "3.19.0"
   PKG_BUILD_FLAGS: "--no-obfuscate"
 
 stages:
@@ -105,8 +105,10 @@ build:android:
         export PKG_BUILD_FLAGS="$PKG_BUILD_FLAGS --release"
         export PKG_RELEASE_TYPE="release"
       else 
-        export PKG_BUILD_FLAGS="$PKG_BUILD_FLAGS --debug"
-        export PKG_RELEASE_TYPE="debug"
+        #export PKG_BUILD_FLAGS="$PKG_BUILD_FLAGS --debug"
+        #export PKG_RELEASE_TYPE="debug"
+        export PKG_BUILD_FLAGS="$PKG_BUILD_FLAGS --release"
+        export PKG_RELEASE_TYPE="release"
       fi
       export PKG_VERSION="`grep 'version: ' pubspec.yaml | sed -E 's/version: (.+)\+([0-9]+)/\1_\2/'`"
       export SEC_FILES="$CI_PROJECT_DIR/private_keys"
@@ -129,6 +131,9 @@ build:android:
     - flutter pub get
     - flutter clean
     - flutter gen-l10n
+    # Following not required as expected, that all files are added to 
+    # the repository.
+    #- flutter packages pub run build_runner build
     - flutter build appbundle $PKG_BUILD_FLAGS
     - mv build/app/outputs/bundle/${PKG_RELEASE_TYPE}/app-${PKG_RELEASE_TYPE}.aab build/app/outputs/bundle/flsvplan-android-${PKG_VERSION}-${PKG_RELEASE_TYPE}.aab || true
     - |
@@ -227,6 +232,9 @@ build:ios:
     - flutter pub get
     - flutter clean
     - flutter gen-l10n
+    # Following not required as expected, that all files are added to 
+    # the repository.
+    #- flutter packages pub run build_runner build
     - |
       echo "Unlock keychain"
       security unlock-keychain -p "$MATCH_KEYCHAIN_PASSWORD" "$MATCH_KEYCHAIN_NAME"
@@ -256,8 +264,8 @@ build:ios:
     - |
       echo "Reset default keychain"
       security default-keychain -d user -s "login.keychain"
-      echo "Delete keychain again"
-      security delete-keychain "$MATCH_KEYCHAIN_NAME"
+      #echo "Delete keychain again"
+      #security delete-keychain "$MATCH_KEYCHAIN_NAME"
       echo "Delete downloaded mobile provision profiles"
       rm -Rf "$HOME/Library/MobileDevice/Provisioning Profiles/*.mobileprovision"
   tags:

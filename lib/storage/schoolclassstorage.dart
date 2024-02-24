@@ -40,21 +40,23 @@ class SchoolClassStorage extends ChangeNotifier {
 
   /// Disable all pupil related bookmarks.
   void disableBookmarks() {
+    final log = Logger(vplanLoggerId);
+    log.fine("Clear pupil mode bookmarks.");
     for (var item in _types.values) {
       if (item.isBookmarked()) {
-        item.setBookmarked(false);
+        item.setBookmarked(false, skipNotification: true);
       }
     }
 
     for(var item in _lessons) {
       if (item.isBookmarked()) {
-        item.setBookmarked(false);
+        item.setBookmarked(false, skipNotification: true);
       }
     }
 
     for(var item in _list.values) {
       if (item.isBookmarked()) {
-        item.setBookmarked(false);
+        item.setBookmarked(false, skipNotification: true);
       }
     }
   }

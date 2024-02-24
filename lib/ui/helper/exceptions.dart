@@ -8,6 +8,16 @@ class ApiAuthException implements Exception {
   String toString() => 'ApiAuthException: $message';
 }
 
+/// Exception, that connection issues occurred.
+class ApiConnectException implements Exception {
+  final String message;
+
+  ApiConnectException(this.message);
+
+  @override
+  String toString() => 'ApiConnectException: $message';
+}
+
 /// Exception, that a selected / loaded school
 /// is not found and not supported.
 class SchoolNotFoundException implements Exception {

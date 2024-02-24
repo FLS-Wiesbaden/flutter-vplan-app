@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:de_fls_wiesbaden_vplan/storage/config.dart';
+import 'package:de_fls_wiesbaden_vplan/ui/helper/exceptions.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:de_fls_wiesbaden_vplan/ui/helper/consts.dart';
@@ -39,10 +40,10 @@ class AuthController extends ChangeNotifier {
     final log = Logger(vplanLoggerId);
     final oidc = await http.get(Uri.parse(await oidcEndpoint())).onError((error, stackTrace) {
       log.warning("Could not determine oidc config: ${error.toString()}.", error, stackTrace);
-      return Future.error("Could not determine OIDC config!");
+      return Future.error(ApiConnectException("Could not determine OIDC config!"));
     });
     if (oidc.statusCode != 200) {
-      return Future.error("Could not determine OIDC config!");
+      return Future.error(ApiConnectException("Could not determine OIDC config!"));
     }
     Map<String, dynamic> oidcConfig = jsonDecode(oidc.body);
     return oidcConfig['authorization_endpoint'];
@@ -90,13 +91,13 @@ class AuthController extends ChangeNotifier {
       encoding: Encoding.getByName('utf-8'),
     ).onError((error, stackTrace) {
       log.warning("Login not possible - could not connect: ${error.toString()}.", error, stackTrace);
-      throw Exception("Could not connect!");
+      throw ApiConnectException("Could not connect!");
     });
     if (response.statusCode != 200) {
       return false;
     }
     await config.setAuthJwt(response.body);
-    await this.updatePermissions();
+    await updatePermissions();
     if (notify) {
       notifyListeners();
     }
@@ -199,7 +200,7 @@ class AuthController extends ChangeNotifier {
       return false;
     }
     await config.setAuthJwt(response.body);
-    await this.updatePermissions();
+    await updatePermissions();
     return true;
   }
 
@@ -216,12 +217,10 @@ class AuthController extends ChangeNotifier {
       log.info("No valid token - no permissions!");
       config.setTeacherPermission(false);
     } else {
-        Map<String, dynamic> decodedToken = JwtDecoder.decode((await this.getAccessToken())!);
+        Map<String, dynamic> decodedToken = JwtDecoder.decode((await getAccessToken())!);
         try {
           await config.setTeacherPermission(decodedToken['scopes'].indexOf('vplan-teacher') != -1);
-          log.info('User' + 
-            ((decodedToken['scopes'].indexOf('vplan-teacher') != -1) ? '' : ' does not') + 
-            ' has teacher permission'
+          log.info('User${(decodedToken['scopes'].indexOf('vplan-teacher') != -1) ? '' : ' does not'} has teacher permission'
           );
         } on Exception catch (error, stackTrace) {
           log.warning("Could not verify token scopes. ", error, stackTrace);

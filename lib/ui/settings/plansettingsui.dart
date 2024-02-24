@@ -1,12 +1,13 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:de_fls_wiesbaden_vplan/models/lesson.dart';
 import 'package:de_fls_wiesbaden_vplan/models/schoolclass.dart';
 import 'package:de_fls_wiesbaden_vplan/models/schooltype.dart';
 import 'package:de_fls_wiesbaden_vplan/models/teacher.dart';
+import 'package:de_fls_wiesbaden_vplan/routes/routes.gr.dart';
 import 'package:de_fls_wiesbaden_vplan/storage/config.dart';
 import 'package:de_fls_wiesbaden_vplan/storage/planstorage.dart';
 import 'package:de_fls_wiesbaden_vplan/storage/schoolclassstorage.dart';
 import 'package:de_fls_wiesbaden_vplan/storage/teacherstorage.dart';
-import 'package:de_fls_wiesbaden_vplan/ui/aboutui.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/settings/mainsettings.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/styles/plancolors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -36,10 +37,7 @@ class _PlanSettingsUi extends State<PlanSettingsUi> {
         padding: const EdgeInsets.only(top: 15),
         child: ElevatedButton(
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const AboutUi()),
-            );
+            context.pushRoute(const AboutUiRoute());
           }, 
           child: Text(AppLocalizations.of(context)!.aboutApp)
         )
@@ -51,7 +49,7 @@ class _PlanSettingsUi extends State<PlanSettingsUi> {
         child: Text(AppLocalizations.of(context)!.general, style: TextStyle(color: PlanColors.PrimaryTextColor, fontWeight: FontWeight.bold, fontSize: 16))
       ),
       Divider(color: PlanColors.BorderColor, height: 5),
-      const GeneralSettingsUi()
+      GeneralSettingsUi(isWizard: widget.isWizard)
     ];
 
     return Padding(

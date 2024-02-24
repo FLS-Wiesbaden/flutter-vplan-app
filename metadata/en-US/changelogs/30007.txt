@@ -1,0 +1,3 @@
+Features:
+    - Sort classes
+    - Refresh UI on resume of the app

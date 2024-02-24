@@ -62,3 +62,4 @@ app.*.map.json
 /coverage
 
 .credentials*
+devtools_options.yaml
