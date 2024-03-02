@@ -165,8 +165,7 @@ class Config extends ChangeNotifier {
 
   /// Update configuration and set plan type.
   Future<void> setModeString(String planType) async {
-    setMode(
-        planType == configPlanTeacher ? PlanType.teacher : PlanType.pupil);
+    setMode(planType == configPlanTeacher ? PlanType.teacher : PlanType.pupil);
   }
 
   /// Get base school vplan endpoint based on school configuration from
@@ -239,7 +238,7 @@ class Config extends ChangeNotifier {
       throw SchoolNotFoundException("School $school not found!");
     }
     if (_schoolName != school) {
-      BackgroundPush.unregister(_school.notifyInstance);
+      BackgroundPush.getInstance().unregister(_school.notifyInstance);
     }
     _schoolName = school;
     return _storage
@@ -305,7 +304,8 @@ class Config extends ChangeNotifier {
       }
     } catch (e) {
       final log = Logger(vplanLoggerId);
-      log.severe("Config: Failed loading teacher permission -- fallback to false!");
+      log.severe(
+          "Config: Failed loading teacher permission -- fallback to false!");
     }
     return false;
   }
