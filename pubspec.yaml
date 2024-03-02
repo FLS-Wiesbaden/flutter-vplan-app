@@ -18,7 +18,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 3.0.9+3000905
+version: 3.0.10+3001001
 
 environment:
   sdk: '>=2.19.4 <3.0.0'
@@ -58,16 +58,17 @@ dependencies:
   # - https://github.com/juliuscanute/qr_code_scanner/issues/719
   # That means for now, when using mobile_scanner, we really have 
   # a problem to be available in projects like F-Droid.
-  mobile_scanner: ^3.5.0 # > anti-feature (uses ml-kit)
+  mobile_scanner: ^3.5.0 # > anti-feature (uses ml-kit); version >= 4 requires java 17
   #qr_code_scanner: ^1.0.1 # maintenance mode; has some ugly bugs.
   logging: ^1.1.1
-  package_info_plus: ^4.0.2
+  package_info_plus: ^5.0.1
   url_launcher: ^6.1.10
   unifiedpush: ^5.0.0
   flutter_localizations:
     sdk: flutter
   jwt_decoder: ^2.0.1
   auto_route: ^7.8.4
+  mutex: ^3.1.0
 
 dev_dependencies:
   flutter_test:

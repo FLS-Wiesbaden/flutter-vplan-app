@@ -155,11 +155,11 @@ class _FlsVplanAppState extends State<FlsVplanApp> {
 
   bool _notificationsEnabled = false;
 
-    @override
+  @override
   void initState() {
     super.initState();
     final log = getVPlanLogger();
-    BackgroundPush.initialize();
+    BackgroundPush.getInstance().initialize();
 
     _isAndroidPermissionGranted();
     try {

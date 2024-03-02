@@ -26,8 +26,8 @@ class _FlsVplanMainUiState extends State<FlsVplanMainUi> with TickerProviderStat
   }
   @override
   Widget build(BuildContext context) {
+    BackgroundPush.getInstance().setupPush();
 
-    BackgroundPush.setupPush();
     return Scaffold(
         backgroundColor: PlanColors.AppBackgroundColor,
         body: SafeArea(
