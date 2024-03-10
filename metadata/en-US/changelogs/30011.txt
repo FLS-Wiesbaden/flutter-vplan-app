@@ -1,0 +1,4 @@
+Release version 3.11
+
+Fixes:
+    - If cloud backup to google drive was enabled, it could happen, that the app crashed on second start onwards.
