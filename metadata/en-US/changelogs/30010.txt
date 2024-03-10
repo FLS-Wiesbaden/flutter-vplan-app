@@ -1,0 +1,8 @@
+Release version 3.10
+
+Improves:
+    - Android app icon is now shown without white circle (improves splash as well)
+    - Teacher settings contain a quick filter now
+
+Fixes:
+    - For each new push notification, log messages got one logger more, flooding the system log
