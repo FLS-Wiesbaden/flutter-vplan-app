@@ -120,11 +120,10 @@ class _AuthUi extends State<AuthUi> {
                                         elevation:
                                             MaterialStatePropertyAll(2.0),
                                       ),
-                                      onPressed: () {
+                                      onPressed: () async {
                                         log.fine("Selected ${school.name}!");
-                                        setState(() {
-                                          config.setSchool(school.id);
-                                        });
+                                        await config.setSchool(school.id);
+                                        setState(() { });
                                       },
                                     ),
                                   );

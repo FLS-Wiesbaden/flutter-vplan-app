@@ -108,21 +108,23 @@ class _GeneralSettingsUi extends State<GeneralSettingsUi> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      AppLocalizations.of(context)!.regularPlan,
+                      AppLocalizations.of(context)!.displayRegularPlan,
                       style: TextStyle(
                           color: PlanColors.PrimaryTextColor,
                           fontWeight: FontWeight.bold),
                     ),
+                    Text(AppLocalizations.of(context)!.no),
                     Switch(
-                        // This bool value toggles the switch.
-                        value: config.addRegularPlan,
-                        activeColor: PlanColors.SelectedIconColor,
-                        onChanged: (bool value) {
-                          // This is called when the user toggles the switch.
-                          setState(() {
-                            config.setAddRegularPlan(value);
-                          });
-                        })
+                      // This bool value toggles the switch.
+                      value: config.addRegularPlan,
+                      activeColor: PlanColors.SelectedIconColor,
+                      onChanged: (bool value) {
+                        // This is called when the user toggles the switch.
+                        setState(() {
+                          config.setAddRegularPlan(value);
+                        });
+                      }),
+                    Text(AppLocalizations.of(context)!.yes),
                   ],
                 ),
               ),
@@ -160,6 +162,9 @@ class _GeneralSettingsUi extends State<GeneralSettingsUi> {
                     _logout(context);
                   },
                 ),
+              ),
+              Container(
+                child: Text(AppLocalizations.of(context)!.clickToLogout),
               )
             ],
           );

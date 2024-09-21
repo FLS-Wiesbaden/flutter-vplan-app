@@ -6,7 +6,7 @@ variables:
   #    - "13.2"
   #    - "13.2.1"
   #    - "14.0.1"
-  flutterVersion: "3.19.0"
+  flutterVersion: "3.24.1"
   PKG_BUILD_FLAGS: "--no-obfuscate"
 
 stages:
