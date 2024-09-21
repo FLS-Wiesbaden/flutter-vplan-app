@@ -1,0 +1,4 @@
+Release version 3.12
+
+Fixes:
+    - Verify if any kind of teacher, school class types or school classes changed for re-fetching the data.
