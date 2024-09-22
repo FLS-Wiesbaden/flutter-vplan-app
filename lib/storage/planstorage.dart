@@ -207,9 +207,9 @@ class PlanStorage extends ChangeNotifier {
     final log = Logger(vplanLoggerId);
     _loading = true;
     log.fine("Plan::load: load in progress (refresh? ${refresh.toString()}).");
-    await _scs.load();
+    await _scs.load(refresh: refresh);
     log.fine("Plan::load: School class storage loaded.");
-    await _tcs.load();
+    await _tcs.load(refresh: refresh);
     log.fine("Plan::load: Teacher storage loaded.");
     final bool storageReady = await storage.ready;
     log.fine("Plan::load: Storage is ${storageReady ? "ready" : "not ready"}.");

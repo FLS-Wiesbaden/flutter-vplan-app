@@ -114,6 +114,7 @@
   "pupil": "Learner",
   "regular": "Regular",
   "regularPlan": "Regular plan",
+  "displayRegularPlan": "Display regular plan: ",
   "roomChange": "Room change",
   "scanCanceled": "Login via the login card was canceled",
   "school": "School",
@@ -152,5 +153,6 @@
   "enabled": "Enabled",
   "disabled": "Disabled",
   "activate": "Activate",
-  "disable": "Disable"
+  "disable": "Disable",
+  "clickToLogout": "To logout, please click on the school icon."
 }

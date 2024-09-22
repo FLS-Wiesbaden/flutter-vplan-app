@@ -10,11 +10,23 @@ import 'package:localstorage/localstorage.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'fetch_teacher_test.mocks.dart';
+import 'package:nock/nock.dart';
+import 'helper/mock.dart';
 
 // Generate a MockClient using the Mockito package.
 // Create new instances of this class in each test.
 @GenerateMocks([http.Client])
 void main() {
+
+  setUpAll(nock.init);
+
+  setUp(() {
+    nock.cleanAll();
+  });
+
+  TestWidgetsFlutterBinding.ensureInitialized();
+  packageInfoMock();
+
   group('fetchTeachers', () {
     test('returns a list of teachers if the http call completes successfully', () async {
       // Prepare configuration
@@ -22,23 +34,22 @@ void main() {
       Config cfg = Config(storage: storage, overwrite: true);
       cfg.setAuthJwt('{"access_token": "flsmock"}');
 
-      final client = MockClient();
+      final interceptor = nock('https://www.fls-wiesbaden.de')
+        .get('/geco/teacher')
+        ..headers({
+          'Authorization': 'Bearer flsmock',
+        })
+        ..reply(200, {
+          "MMFR": {"id": 197,"userId": null,"firstName": "Maxi","lastName": "Musterfrau","shortcut": "MMFR"},
+          "MMAM": {"id": 63,"userId": null,"firstName": "Max","lastName": "Mustermann","shortcut": "MMAM"}
+        });
 
-      // Use Mockito to return a successful response when it calls the
-      // provided http.Client.
-      when(client
-              .get(Uri.parse(await cfg.getEndpoint(subPath: '/teacher')), headers: {HttpHeaders.authorizationHeader: "Bearer flsmock"}))
-          .thenAnswer((_) async =>
-              http.Response(
-              '{"MMFR": {"id": 197,"userId": null,"firstName": "Maxi","lastName": "Musterfrau","shortcut": "MMFR"},'
-              '"MMAM": {"id": 63,"userId": null,"firstName": "Max","lastName": "Mustermann","shortcut": "MMAM"}}',
-              200));
-
-      final result = await TeacherStorage.fetchTeachers(client: client);
+      TeacherStorage ts = TeacherStorage();
+      final result = await ts.fetchTeachers();
       expect(result, isA<List<Teacher>>());
-      expect(result.length, 2);
-      expect(result.first.shortcut, "MMFR");
-      expect(result.first.firstName, "Maxi");
+      expect(result?.length, 2);
+      expect(result?.first.shortcut, "MMFR");
+      expect(result?.first.firstName, "Maxi");
     });
 
     test('could return exception as well', () async {
@@ -48,20 +59,19 @@ void main() {
       Config cfg = Config(storage: storage, overwrite: true);
       cfg.setAuthJwt('{"access_token": "flsmockfail"}');
 
-      final client = MockClient();
-
-      // Use Mockito to return a successful response when it calls the
-      // provided http.Client.
-      when(client
-              .get(Uri.parse(await cfg.getEndpoint(subPath: '/teacher')), headers: {HttpHeaders.authorizationHeader: "Bearer flsmockfail"}))
-          .thenAnswer((_) async =>
-              http.Response('', 401));
+      final interceptor = nock('https://www.fls-wiesbaden.de')
+        .get('/geco/teacher')
+        ..headers({
+          'Authorization': 'Bearer flsmockfail',
+        })
+        ..reply(401, '');
 
       try {
-        await TeacherStorage.fetchTeachers(client: client);
+        TeacherStorage ts = TeacherStorage();
+        await ts.fetchTeachers();
         fail('exception not thrown!');
       } catch (e) {
-        expect(e, isInstanceOf<Exception>());
+        expect(e, isInstanceOf<NetConnectionNotAllowed>());
       }
     });
 
@@ -71,21 +81,20 @@ void main() {
       Config cfg = Config(storage: storage, overwrite: true);
       cfg.setAuthJwt('{"access_token": "flsmock"}');
 
-      final client = MockClient();
       final TeacherStorage tstg = TeacherStorage();
       final LocalStorage lstg = LocalStorage(TeacherStorage.collectionName);
 
-      // Use Mockito to return a successful response when it calls the
-      // provided http.Client.
-      when(client
-              .get(Uri.parse(await cfg.getEndpoint(subPath: '/teacher')), headers: {HttpHeaders.authorizationHeader: "Bearer flsmock"}))
-          .thenAnswer((_) async =>
-              http.Response(
-              '{"MMFR": {"id": 197,"userId": null,"firstName": "Maxi","lastName": "Musterfrau","shortcut": "MMFR"},'
-              '"MMAM": {"id": 63,"userId": null,"firstName": "Max","lastName": "Mustermann","shortcut": "MMAM"}}',
-              200));
+      final interceptor = nock('https://www.fls-wiesbaden.de')
+        .get('/geco/teacher')
+        ..headers({
+          'Authorization': 'Bearer flsmock',
+        })
+        ..reply(200, {
+          "MMFR": {"id": 197,"userId": null,"firstName": "Maxi","lastName": "Musterfrau","shortcut": "MMFR"},
+          "MMAM": {"id": 63,"userId": null,"firstName": "Max","lastName": "Mustermann","shortcut": "MMAM"}
+        });
 
-      await tstg.load(client: client);
+      await tstg.load();
       expect(tstg.teachers, isA<List<Teacher>>());
       expect(tstg.teachers.length, 2);
       expect(lstg.getItem('fetched'), isNotNull);

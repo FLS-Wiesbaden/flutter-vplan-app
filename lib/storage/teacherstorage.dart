@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:intl/intl.dart';
 import 'package:de_fls_wiesbaden_vplan/controllers/authcontroller.dart';
+import 'package:de_fls_wiesbaden_vplan/ui/helper/apirequest.dart';
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:de_fls_wiesbaden_vplan/models/teacher.dart';
@@ -83,7 +85,16 @@ class TeacherStorage extends ChangeNotifier {
     await storage.setItem("fetched", _fetched?.toIso8601String());
   }
 
-  Future<void> load({bool refresh = false, http.Client? client}) async {
+  Future<void> load({bool refresh = false}) async {
+    // Check last refresh and force if required.
+    if (_fetched != null) {
+      DateTime now = DateTime.now();
+      DateTime graceTime = _fetched!.add(Duration(days: 1));
+      if (now.isAfter(graceTime)) {
+        refresh = true;
+      }
+    }
+
     if (!refresh && _fetched != null) {
       return;
     } else if (!refresh && await storage.ready && storage.getItem("data") != null) {
@@ -100,29 +111,45 @@ class TeacherStorage extends ChangeNotifier {
       updateTeachers(teacherList);
       // save() is not required, as we just loaded from storage.
     } else {
-      await fetchTeachers(client: client).then((teacherList) async {
-        _fetched = DateTime.now();
-        updateTeachers(teacherList);
+      await fetchTeachers().then((teacherList) async {
+        if (teacherList != null) {
+          _fetched = DateTime.now();
+          updateTeachers(teacherList);
+        }
         await save();
       });
     }
   }
 
-  static Future<List<Teacher>> fetchTeachers({http.Client? client}) async {
-    client ??= http.Client();
-    final response = await client.get(Uri.parse(await Config.getInstance().getEndpoint(subPath: '/teacher')),
-        headers: {HttpHeaders.authorizationHeader: await AuthController.getInstance().getAuthorizationHeader()});
-    client.close();
+  Future<List<Teacher>?> fetchTeachers() async {
+    final log = Logger(vplanLoggerId);
+
+    Map<String, String> headers = {};
+    if (_fetched != null) {
+      final DateFormat formatter = DateFormat('EEE, dd LLL y H:m:s');
+      headers[HttpHeaders.ifModifiedSinceHeader] =
+          "${formatter.format(_fetched!.toUtc())} GMT";
+    }
+
+    final response = await defaultApiRequest("/teacher",
+            headers: headers)
+        .onError((error, stackTrace) {
+      return Future.error(error!, stackTrace);
+    });
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
       List<Teacher> list = [];
 
-      for (var element in (jsonDecode(response.body) as Map).values) {
+      for (var element in (jsonDecode(await response.stream.bytesToString()) as Map).values) {
         list.add(Teacher.fromJson(element));
       }
       return list;
+    } else if (_fetched != null && (response.statusCode == 204 || response.statusCode == 304)) {
+      log.info(
+          "Downloaded teachers - no data changed! -- status: ${response.statusCode}");
+      return null;
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.

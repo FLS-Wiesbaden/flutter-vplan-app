@@ -38,6 +38,12 @@ class Config extends ChangeNotifier {
         "assets/images/AppIcon.png",
         "https://www.fls-wiesbaden.de",
         "https://www.fls-wiesbaden.de/geco/auth"),
+    /*School(
+        "local",
+        "Local",
+        "assets/schools/lss.png",
+        "http://fls.local",
+        "http://fls.local/geco/auth"),*/
     /*School("sds", "SDS Wiesbaden", "assets/schools/sds.png", "https://sds.fls-wiesbaden.de", "https://sds.fls-wiesbaden.de/geco/auth"),
     School("gks", "GKS Obertshausen", "assets/schools/gks.png", "https://vplan.gks-obertshausen.de", "https://vplan.gks-obertshausen.de/geco/auth"),
     School("lss", "LSS Wiesbaden", "assets/schools/lss.png", "https://lss.fls-wiesbaden.de", "https://lss.fls-wiesbaden.de/geco/auth"),*/
@@ -234,16 +240,18 @@ class Config extends ChangeNotifier {
   /// Set school identifier.
   Future<void> setSchool(String school) async {
     // Throws an exception, if school cannot be found.
-    if (Config.schools.indexWhere((element) => element.id == school) < 0) {
+    int schoolIdx = Config.schools.indexWhere((element) => element.id == school);
+    if (schoolIdx < 0) {
       throw SchoolNotFoundException("School $school not found!");
     }
     if (_schoolName != school) {
       BackgroundPush.getInstance().unregister(_school.notifyInstance);
     }
     _schoolName = school;
+    _school = Config.schools.elementAt(schoolIdx);
     return _storage
         .write(key: configKeySchool, value: school)
-        .whenComplete(() => notifyListeners());
+        .whenComplete(()  => notifyListeners());
   }
 
   /// Get school identifier.

@@ -12,11 +12,23 @@ import 'package:de_fls_wiesbaden_vplan/storage/schoolclassstorage.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'fetch_schoolclassstorage_test.mocks.dart';
+import 'package:nock/nock.dart';
+import 'helper/mock.dart';
 
 // Generate a MockClient using the Mockito package.
 // Create new instances of this class in each test.
 @GenerateMocks([http.Client])
 void main() {
+
+  setUpAll(nock.init);
+
+  setUp(() {
+    nock.cleanAll();
+  });
+
+  TestWidgetsFlutterBinding.ensureInitialized();
+  packageInfoMock();
+
   group('fetchSchoolClass', () {
     test('_loading (only initialized)', () {
       final scs = SchoolClassStorage();
@@ -29,24 +41,25 @@ void main() {
       Config cfg = Config(storage: storage, overwrite: true);
       cfg.setAuthJwt('{"access_token": "flsmock"}');
 
-      final client = MockClient();
+      final interceptor = nock('https://www.fls-wiesbaden.de')
+        .get('/geco/vplan/loadClasses')
+        ..headers({
+          'Authorization': 'Bearer flsmock',
+        })
+        ..reply(200, [
+          {"shortcut":"InteA","schoolType":2},
+          {"shortcut":"13","schoolType":1},
+          {"shortcut":"12","schoolType":1}
+        ]);
+
       final scs = SchoolClassStorage();
 
-      // Use Mockito to return a successful response when it calls the
-      // provided http.Client.
-      when(client
-              .get(Uri.parse(await cfg.getEndpoint(subPath: '/vplan/loadClasses')), headers: {HttpHeaders.authorizationHeader: "Bearer flsmock"}))
-          .thenAnswer((_) async =>
-              http.Response(
-              '[{"shortcut":"InteA","schoolType":2},{"shortcut":"13","schoolType":1},{"shortcut":"12","schoolType":1}]',
-              200));
-
-      final result = await scs.downloadClasses(client: client);
+      final result = await scs.downloadClasses();
       expect(result, isNotNull);
       expect(result, isA<Map<String, SchoolClass>>());
-      expect(result!.length, 3);
+      expect(result?.length, 3);
       for (var f in ['InteA', '13', '12']) {
-        expect(result.containsKey(f), isTrue);
+        expect(result?.containsKey(f), isTrue);
       }
     });
 
@@ -133,22 +146,22 @@ void main() {
       Config cfg = Config(storage: storage, overwrite: true);
       cfg.setAuthJwt('{"access_token": "flsmock"}');
 
-      final client = MockClient();
       final scs = SchoolClassStorage();
 
-      // Use Mockito to return a successful response when it calls the
-      // provided http.Client.
-      when(client
-              .get(Uri.parse(await cfg.getEndpoint(subPath: '/vplan/loadSchoolTypes')), headers: {HttpHeaders.authorizationHeader: "Bearer flsmock"}))
-          .thenAnswer((_) async =>
-              http.Response('["Unbekannt","BG","BS","BFS","HBFS"]', 200));
+      final interceptor = nock('https://www.fls-wiesbaden.de')
+        .get('/geco/vplan/loadSchoolTypes')
+        ..headers({
+          'Authorization': 'Bearer flsmock',
+        })
+        ..reply(200, ["Unbekannt","BG","BS","BFS","HBFS"]);
 
-      final result = await scs.downloadSchoolTypes(client: client);
+      final result = await scs.downloadSchoolTypes();
       expect(result, isNotNull);
-      expect(result, isA<List<SchoolType>>());
-      expect(result!.length, 5);
+      expect(result.types, isNotNull);
+      expect(result.types, isA<List<SchoolType>>());
+      expect(result.types?.length, 5);
       for (var f in ['Unbekannt', 'BG', 'BS', 'BFS', 'HBFS']) {
-        expect(result.indexWhere((element) => element.name == f), isNonNegative);
+        expect(result.types?.indexWhere((element) => element.name == f), isNonNegative);
       }
     });
 

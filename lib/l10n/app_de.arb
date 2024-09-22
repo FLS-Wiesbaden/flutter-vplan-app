@@ -114,6 +114,7 @@
   "pupil": "Lernende",
   "regular": "Regulär",
   "regularPlan": "Stundenplan",
+  "displayRegularPlan": "Stundenplananzeige: ",
   "roomChange": "Raumänderung",
   "scanCanceled": "Anmelden über die Anmeldekarte wurde abgebrochen",
   "school": "Schule",
@@ -152,5 +153,6 @@
   "enabled": "Aktiviert",
   "disabled": "Deaktiviert",
   "activate": "Aktivieren",
-  "disable": "Deaktivieren"
+  "disable": "Deaktivieren",
+  "clickToLogout": "Zum Abmelden bitte auf das Schullogo klicken."
 }
