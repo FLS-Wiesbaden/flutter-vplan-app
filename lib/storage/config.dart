@@ -154,9 +154,18 @@ class Config extends ChangeNotifier {
     if (!await _storage.containsKey(key: configKeyMode)) {
       return PlanType.pupil;
     }
-    return await _storage.read(key: configKeyMode) == configPlanTeacher
-        ? PlanType.teacher
-        : PlanType.pupil;
+    final log = Logger(vplanLoggerId);
+    PlanType planMode = PlanType.pupil;
+    try {
+      String? storeMode = await _storage.read(key: configKeyMode);
+      if (storeMode == configPlanTeacher) {
+        planMode = PlanType.teacher;
+      }
+    } on Exception {
+      log.fine("No plan mode stored yet.");
+    }
+    
+    return planMode;
   }
 
   /// Update configuration and set plan type.
@@ -193,7 +202,11 @@ class Config extends ChangeNotifier {
   /// Get configuration whether regular plan schould be loaded.
   Future<bool> getAddRegularPlan() async {
     if (await _storage.containsKey(key: configKeyAddRegularPlan)) {
-      return (await _storage.read(key: configKeyAddRegularPlan))! == 'true';
+      try {
+        return (await _storage.read(key: configKeyAddRegularPlan))! == 'true';
+      } on Exception {
+        return true;
+      }
     } else {
       return true;
     }
@@ -212,9 +225,13 @@ class Config extends ChangeNotifier {
   /// number of days.
   Future<int> getNumberDays() async {
     if (await _storage.containsKey(key: configKeyNumberDays)) {
-      int? days =
-          int.tryParse((await _storage.read(key: configKeyNumberDays))!);
-      return days ?? 5;
+      try {
+        int? days =
+            int.tryParse((await _storage.read(key: configKeyNumberDays))!);
+        return days ?? 5;
+      } on Exception {
+        return 5;
+      }
     } else {
       return 5;
     }
@@ -231,7 +248,11 @@ class Config extends ChangeNotifier {
   /// Get school identifier.
   Future<String> getSchoolName() async {
     if (await _storage.containsKey(key: configKeySchool)) {
-      return (await _storage.read(key: configKeySchool))!;
+      try {
+        return (await _storage.read(key: configKeySchool))!;
+      } on Exception {
+        return configDefaultSchool;
+      }
     } else {
       return configDefaultSchool;
     }
@@ -257,7 +278,11 @@ class Config extends ChangeNotifier {
   /// Get school identifier.
   Future<bool> getNotifyRegistered() async {
     if (await _storage.containsKey(key: configKeyNotifyRegistered)) {
-      return (await _storage.read(key: configKeyNotifyRegistered))! == 'true';
+      try {
+        return (await _storage.read(key: configKeyNotifyRegistered))! == 'true';
+      } on Exception {
+        return false;
+      }
     } else {
       return false;
     }
@@ -266,7 +291,11 @@ class Config extends ChangeNotifier {
   /// Get school identifier.
   Future<String> getNotifyEndpoint() async {
     if (await _storage.containsKey(key: configKeyNotifyEndpoint)) {
-      return (await _storage.read(key: configKeyNotifyEndpoint))!;
+      try {
+        return (await _storage.read(key: configKeyNotifyEndpoint))!;
+      } on Exception {
+        return "";
+      }
     } else {
       return "";
     }
