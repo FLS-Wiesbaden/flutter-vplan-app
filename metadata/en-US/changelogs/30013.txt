@@ -1,0 +1,4 @@
+Release version 3.13
+
+Fixes:
+    - Improve error handling in case storage is invalid or not initialized yet.
