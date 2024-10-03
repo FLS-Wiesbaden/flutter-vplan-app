@@ -217,7 +217,13 @@ class _FlsVplanAppState extends State<FlsVplanApp> {
           flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>();
 
-      granted = await androidImplementation?.requestNotificationsPermission();      
+      if (androidImplementation != null) {
+        try {
+          granted = await androidImplementation.requestNotificationsPermission();      
+        } on Exception {
+          log.warning("Requesting for permission of notifications failed.");
+        }
+      }
     } else {
       log.info("Notifications disabled as not supported.");
     }

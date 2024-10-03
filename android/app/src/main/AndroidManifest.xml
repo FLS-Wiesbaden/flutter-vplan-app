@@ -5,7 +5,7 @@
         android:label="FLS Vertretungsplan"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:fullBackupContent="@xml/backup_rules">
         <activity
             android:name=".MainActivity"
