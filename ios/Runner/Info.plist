@@ -40,6 +40,8 @@
 	<true/>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Share of standin plan entries</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>Access most functions for calendar viewing and editing.</string>
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>

@@ -8,12 +8,12 @@ import 'package:de_fls_wiesbaden_vplan/ui/styles/plancolors.dart';
 import 'package:de_fls_wiesbaden_vplan/utils/logger.dart';
 import 'package:de_fls_wiesbaden_vplan/utils/notifications.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:workmanager/workmanager.dart';
+import 'l10n/app_localizations.dart';
 
 // Notifications
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -57,7 +57,8 @@ void main() async {
   // Set logging
   configureVPlanLogger();
   final log = getVPlanLogger();
-  log.fine("App is starting,...");
+  log.info("App is starting,...");
+  log.info("Log level is set to ${log.level.toString()}");
 
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.presentError(details);

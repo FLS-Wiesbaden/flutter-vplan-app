@@ -1,0 +1,4 @@
+Release version 3.14
+
+Changes:
+    - Compatibility update for Android

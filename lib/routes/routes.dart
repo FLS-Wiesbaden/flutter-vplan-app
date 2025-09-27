@@ -4,7 +4,7 @@ import 'package:de_fls_wiesbaden_vplan/guards/firstrun.guards.dart';
 import 'package:de_fls_wiesbaden_vplan/routes/routes.gr.dart';
 
 @AutoRouterConfig(replaceInRouteName: 'Route')
-class AppRouter extends $AppRouter {
+class AppRouter extends RootStackRouter {
   @override
   RouteType get defaultRouteType =>
       const RouteType.material(); //.cupertino, .adaptive ..etc

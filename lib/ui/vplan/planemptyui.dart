@@ -1,5 +1,5 @@
 import 'package:de_fls_wiesbaden_vplan/ui/styles/plancolors.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:de_fls_wiesbaden_vplan/l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
 

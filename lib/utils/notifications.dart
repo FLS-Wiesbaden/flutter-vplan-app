@@ -102,7 +102,7 @@ class BackgroundPush {
     }
   }
 
-  void onNewEndpoint(String endpoint, String instance) {
+  void onNewEndpoint(PushEndpoint endpoint, String instance) {
     Config cfg = Config.getInstance();
     final log = getVPlanLogger();
     log.fine(
@@ -112,11 +112,13 @@ class BackgroundPush {
       return;
     }
     cfg.setNotifyRegistered(true);
-    cfg.setNotifyEndpoint(endpoint);
+    cfg.setNotifyEndpoint(endpoint.url);
     log.info("Notification endpoint is $endpoint");
   }
 
-  void onRegistrationFailed(String instance) {
+  void onRegistrationFailed(FailedReason reason, String instance) {
+    final log = getVPlanLogger();
+    log.warning("Could not register on $instance due to ${reason.toString()}");
     onUnregistered(instance);
   }
 
@@ -133,12 +135,13 @@ class BackgroundPush {
     log.info("Notification registration is disabled.");
   }
 
-  Future<void> pushNotifyReceived(Uint8List message, String instance) async {
-    processMessage.protect(() => processNotification(message, instance));
+  void pushNotifyReceived(PushMessage message, String instance) async {
+    await processMessage.protect(() => processNotification(message, instance));
   }
 
-  Future<bool> processNotification(Uint8List message, String instance) async {
+  Future<bool> processNotification(PushMessage pushMessage, String instance) async {
     final log = getVPlanLogger();
+    Uint8List message = pushMessage.content;
     log.finer("Cloud message processing: ${utf8.decode(message)}");
     final notificationBasics = Map<String, dynamic>.from(
       json.decode(utf8.decode(message)),

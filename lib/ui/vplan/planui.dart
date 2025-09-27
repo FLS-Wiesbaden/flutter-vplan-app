@@ -9,10 +9,10 @@ import 'package:de_fls_wiesbaden_vplan/ui/styles/plancolors.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/vplan/plandayui.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/vplan/planemptyui.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/vplan/planerrorui.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Widget to show the plan itself in a specific hierarchy:
 ///   PlanUi
@@ -134,7 +134,7 @@ class _PlanUiState extends State<PlanUi> with TickerProviderStateMixin, WidgetsB
                             builder: (context, value, _) {
                               return DotsIndicator(
                                 dotsCount: snapshot.data!.length(),
-                                position: value,
+                                position: value*1.0,
                                 decorator: DotsDecorator(
                                   color: PlanColors
                                       .PageIndicatorColor, // Inactive color

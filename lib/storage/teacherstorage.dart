@@ -1,13 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:intl/intl.dart';
-import 'package:de_fls_wiesbaden_vplan/controllers/authcontroller.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/helper/apirequest.dart';
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:de_fls_wiesbaden_vplan/models/teacher.dart';
-import 'package:http/http.dart' as http;
-import 'package:de_fls_wiesbaden_vplan/storage/config.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/helper/consts.dart';
 import 'package:logging/logging.dart';
 

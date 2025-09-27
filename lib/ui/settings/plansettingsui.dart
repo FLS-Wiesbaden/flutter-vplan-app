@@ -10,7 +10,7 @@ import 'package:de_fls_wiesbaden_vplan/storage/schoolclassstorage.dart';
 import 'package:de_fls_wiesbaden_vplan/storage/teacherstorage.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/settings/mainsettings.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/styles/plancolors.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:de_fls_wiesbaden_vplan/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

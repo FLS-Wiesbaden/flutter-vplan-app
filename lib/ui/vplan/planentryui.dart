@@ -1,11 +1,11 @@
 import 'dart:typed_data';
 import 'dart:ui' as ui;
-import 'package:add_2_calendar/add_2_calendar.dart';
+// import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:de_fls_wiesbaden_vplan/models/entry.dart';
 import 'package:de_fls_wiesbaden_vplan/storage/config.dart';
 import 'package:de_fls_wiesbaden_vplan/storage/planstorage.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/styles/plancolors.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:de_fls_wiesbaden_vplan/l10n/app_localizations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -35,11 +35,13 @@ class _PlanEntryUi extends State<PlanEntryUi> {
         actions: <CupertinoActionSheetAction>[
           CupertinoActionSheetAction(
             onPressed: () {
-              Share.shareXFiles(
-                [XFile.fromData(pngBytes, mimeType: "image/png")], 
-                subject: AppLocalizations.of(context)!.standInPlan, 
-                text: shareText, 
-                sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size
+              SharePlus.instance.share(
+                ShareParams(
+                  files: [XFile.fromData(pngBytes, mimeType: "image/png")],
+                  subject: AppLocalizations.of(context)!.standInPlan,
+                  text: shareText,
+                  sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+                ),
               );
               Navigator.of(context).pop();
             },
@@ -47,15 +49,17 @@ class _PlanEntryUi extends State<PlanEntryUi> {
           ),
           CupertinoActionSheetAction(
             onPressed: () {
-              Share.share(
-                shareText, 
-                subject: AppLocalizations.of(context)!.standInPlan, 
-                sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size
+              SharePlus.instance.share(
+                ShareParams(
+                  text: shareText,
+                  subject: AppLocalizations.of(context)!.standInPlan,
+                  sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+                ),
               );
               Navigator.of(context).pop();
             },
             child: Text(AppLocalizations.of(context)!.shareAsText),
-          ),
+          )/*,
           CupertinoActionSheetAction(
             onPressed: () async {
               Event calEvent = Event(
@@ -70,7 +74,7 @@ class _PlanEntryUi extends State<PlanEntryUi> {
               Navigator.of(context).pop();
             },
             child: Text(AppLocalizations.of(context)!.createCalendarEntry),
-          )
+          )*/
         ],
       ),
     );

@@ -11,10 +11,15 @@ class CustomPageViewScrollPhysics extends ScrollPhysics {
   @override
   bool shouldAcceptUserOffset(ScrollMetrics position) => true;
 
-  @override
+  /* @override
   SpringDescription get spring => const SpringDescription(
         mass: 80,
-        stiffness: 100,
-        damping: 1,
+        stiffness: 1601.24996,
+        damping: 80,
+      ); */
+  @override
+  SpringDescription get spring => SpringDescription.withDurationAndBounce(
+        duration: Duration(milliseconds: 800),
+        bounce: 0.2,
       );
 }

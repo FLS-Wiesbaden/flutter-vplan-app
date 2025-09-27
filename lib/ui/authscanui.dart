@@ -7,7 +7,7 @@ import 'package:de_fls_wiesbaden_vplan/storage/config.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/helper/consts.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/helper/exceptions.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/helper/types.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:de_fls_wiesbaden_vplan/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -121,7 +121,7 @@ class _AuthScanUi extends State<AuthScanUi> {
       if (widget.onScanCompleted != null) {
         widget.onScanCompleted!(message);
       }
-      context.popRoute();
+      context.maybePop();
     }
   }
 

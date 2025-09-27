@@ -3,7 +3,7 @@ import 'package:de_fls_wiesbaden_vplan/ui/settings/plansettingsui.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/styles/plancolors.dart';
 import 'package:de_fls_wiesbaden_vplan/ui/vplan/planui.dart';
 import 'package:de_fls_wiesbaden_vplan/utils/notifications.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:de_fls_wiesbaden_vplan/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 @RoutePage()
