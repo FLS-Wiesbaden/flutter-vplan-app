@@ -61,5 +61,7 @@ app.*.map.json
 # tests
 /coverage
 
+/ios/.bundle/
+
 .credentials*
 devtools_options.yaml
